@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🦴 骨傷科 OSCE 特殊檢查抽籤系統</title>
+    <style>
+        :root {
+            --primary: #dc2626;
+            --primary-light: #fef2f2;
+            --accent: #5aa493;
+            --text: #374151;
+            --bg: #fafafa;
+            --radius: 18px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: "Microsoft JhengHei","PingFang HK","Noto Sans TC",sans-serif;
+            background: var(--bg); color: var(--text); line-height: 1.7; min-height: 100vh;
+        }
+
+        /* Top bar */
+        .top-bar {
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+            color: white; padding: 18px 24px; text-align: center;
+            box-shadow: 0 4px 20px rgba(220,38,38,0.3);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .top-bar h1 { font-size: 1.4rem; margin-bottom: 2px; }
+        .top-bar p { font-size: 0.82rem; opacity: 0.85; }
+
+        .container { max-width: 920px; margin: 0 auto; padding: 24px 18px 70px; }
+
+        /* Landing */
+        .landing { text-align: center; padding: 28px 8px; }
+        .landing-icon { font-size: 4.5rem; margin-bottom: 8px; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+        .landing h2 { color: var(--primary); font-size: 1.7rem; margin-bottom: 4px; }
+        .landing .sub { color: #666; max-width: 540px; margin: 0 auto 18px; font-size: 0.92rem; }
+
+        /* Stats */
+        .stats { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin: 16px 0; }
+        .stat {
+            background: white; border: 2px solid #e5e7eb; border-radius: 30px;
+            padding: 7px 18px; font-size: 0.88rem; font-weight: bold;
+            display: flex; align-items: center; gap: 5px;
+        }
+
+        /* Info grid */
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(210px,1fr)); gap: 14px; margin: 22px 0; text-align: left; }
+        .info-card {
+            background: white; border-radius: 14px; padding: 18px;
+            border: 1px solid #e5e7eb; box-shadow: 0 2px 8px rgba(0,0,0,0.03); transition: 0.3s;
+        }
+        .info-card:hover { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(0,0,0,0.08); }
+        .info-card h4 { margin: 0 0 5px; font-size: 1rem; }
+        .info-card p { margin: 0; color: #6b7280; font-size: 0.85rem; }
+
+        /* Settings */
+        .settings-panel {
+            background: white; border: 2px solid #e5e7eb; border-radius: var(--radius);
+            padding: 20px; margin: 18px 0; text-align: left;
+        }
+        .settings-panel h4 { margin: 0 0 12px; }
+        .pick-row { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin-bottom: 14px; }
+        .pick-group { text-align: center; }
+        .pick-group label { display: block; font-size: 0.82rem; color: #666; margin-bottom: 3px; }
+        .pick-group select {
+            padding: 7px 14px; border: 2px solid #e5e7eb; border-radius: 10px;
+            font-size: 0.95rem; font-weight: bold; background: white; cursor: pointer; outline: none; transition: 0.2s;
+        }
+        .pick-group select:focus { border-color: var(--primary); }
+        .weight-row { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; flex-wrap: wrap; }
+        .weight-label { min-width: 85px; font-weight: bold; font-size: 0.88rem; }
+        .weight-slider { flex: 1; min-width: 100px; accent-color: var(--primary); }
+        .weight-val { min-width: 28px; text-align: center; font-weight: bold; color: var(--primary); }
+
+        /* Draw button */
+        .draw-btn {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white; border: none; padding: 17px 50px; border-radius: 30px;
+            font-size: 1.25rem; font-weight: bold; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 6px 25px rgba(239,68,68,0.35); display: inline-block; margin-top: 8px;
+        }
+        .draw-btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 35px rgba(239,68,68,0.45); }
+        .draw-btn:active { transform: translateY(0) scale(0.98); }
+        .note { color: #999; font-size: 0.8rem; margin-top: 10px; }
+
+        /* Exam area */
+        .exam-area { display: none; }
+        .exam-area.active { display: block; animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(15px)} to{opacity:1;transform:translateY(0)} }
+
+        /* Phase indicator */
+        .phase-ind { text-align:center; padding:12px 18px; border-radius:14px; margin-bottom:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; }
+
+        /* Timer */
+        .timer-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            background: white; padding: 12px 18px; border-radius: 14px;
+            margin-bottom: 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 2px solid #fee2e2; flex-wrap: wrap; gap: 8px;
+        }
+        .timer-text { font-size: 1.4rem; font-weight: bold; font-variant-numeric: tabular-nums; min-width: 100px; }
+        .timer-text.warn { color: #ef4444; animation: pulse 1s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+        .timer-progress { flex: 1; min-width: 100px; }
+        .timer-track { background: #e5e7eb; height: 9px; border-radius: 5px; overflow: hidden; }
+        .timer-fill { height: 100%; width: 100%; background: linear-gradient(90deg,#22c55e,#16a34a); transition: width 1s linear; border-radius: 5px; }
+        .timer-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+
+        /* Station card */
+        .station {
+            background: white; border: 2px solid #e5e7eb; border-radius: var(--radius);
+            margin-bottom: 20px; overflow: hidden; transition: 0.3s;
+        }
+        .station:hover { border-color: #f87171; box-shadow: 0 4px 18px rgba(248,113,113,0.12); }
+        .station.is-star { border-left: 5px solid #f59e0b; }
+        .station-header {
+            background: linear-gradient(135deg,#fef2f2,#fff1f2);
+            padding: 18px 22px; border-bottom: 2px solid #fecaca;
+        }
+        .station-badges { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-bottom: 4px; }
+        .badge { display:inline-block; padding:3px 12px; border-radius:20px; font-size:0.78rem; font-weight:bold; }
+        .badge-spine { background:#dbeafe; color:#1d4ed8; }
+        .badge-limb { background:#dcfce7; color:#166534; }
+        .badge-star { background:#fef3c7; color:#b45309; }
+        .badge-region { background:#f3f4f6; color:#4b5563; }
+        .station-name { font-size: 1.35rem; font-weight: bold; color: #1f2937; margin: 4px 0 2px; }
+        .station-eng { font-size: 0.82rem; color: #9ca3af; }
+
+        .station-steps { padding: 16px 20px; }
+        .step { margin-bottom: 10px; border: 1px solid #f3f4f6; border-radius: 12px; overflow: hidden; }
+        .step-hd {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 16px; background: #fafafa; cursor: pointer; transition: 0.2s; gap: 8px;
+        }
+        .step-hd:hover { background: #f0f0f0; }
+        .step-label { font-weight: bold; font-size: 0.95rem; }
+        .step-btn {
+            background: linear-gradient(135deg,#fb923c,#f97316);
+            color: white; border: none; padding: 5px 14px; border-radius: 20px;
+            font-size: 0.82rem; font-weight: bold; cursor: pointer; transition: 0.2s; white-space: nowrap; flex-shrink: 0;
+        }
+        .step-btn:hover { transform: scale(1.05); }
+        .step-btn.done { background: #22c55e; cursor: default; }
+        .step-ans {
+            display: none; padding: 12px 16px; background: #f0fdf4;
+            border-top: 2px solid #86efac; line-height: 1.8; font-size: 0.92rem; color: #166534; white-space: pre-line;
+        }
+        .step-ans.show { display: block; animation: fadeIn 0.3s; }
+
+        /* Buttons */
+        .btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 22px; padding-bottom: 18px; }
+        .btn {
+            border: none; padding: 11px 26px; border-radius: 14px;
+            font-size: 0.95rem; font-weight: bold; cursor: pointer; transition: 0.3s; color: white;
+        }
+        .btn:hover { transform: translateY(-2px); }
+        .btn-purple { background: linear-gradient(135deg,#a78bfa,#7c3aed); }
+        .btn-purple:hover { box-shadow: 0 4px 15px rgba(124,58,237,0.3); }
+        .btn-blue { background: linear-gradient(135deg,#60a5fa,#3b82f6); }
+        .btn-blue:hover { box-shadow: 0 4px 15px rgba(59,130,246,0.3); }
+        .btn-green { background: linear-gradient(135deg,#22c55e,#16a34a); padding: 13px 32px; font-size: 1.05rem; }
+        .btn-green:hover { box-shadow: 0 6px 18px rgba(22,163,74,0.3); }
+        .btn-gray { background: linear-gradient(135deg,#9ca3af,#6b7280); }
+        .btn-gray:hover { box-shadow: 0 4px 15px rgba(107,114,128,0.3); }
+        .btn-sm { padding: 7px 14px; font-size: 0.82rem; }
+
+        /* History */
+        .history { background: white; border: 2px solid #e5e7eb; border-radius: var(--radius); padding: 18px; margin-top: 28px; }
+        .history h3 { margin-bottom: 10px; }
+        .history-item {
+            padding: 9px 12px; background: #f9fafb; border-radius: 10px; margin-bottom: 7px;
+            font-size: 0.88rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 5px;
+        }
+        .history-item .time { color: #9ca3af; font-size: 0.78rem; }
+        .history-empty { color: #ccc; text-align: center; padding: 18px; }
+
+        /* Browse */
+        .browse-section { margin-top: 28px; }
+        .browse-toggle {
+            background: white; border: 2px dashed #d1d5db; border-radius: var(--radius);
+            padding: 14px; text-align: center; cursor: pointer; transition: 0.3s; font-weight: bold; color: #6b7280;
+        }
+        .browse-toggle:hover { border-color: var(--primary); color: var(--primary); }
+        .browse-content { display: none; margin-top: 14px; }
+        .browse-content.show { display: block; animation: fadeIn 0.3s; }
+        .browse-cat { margin-bottom: 18px; }
+        .browse-cat h4 { color: white; padding: 10px 16px; border-radius: 12px 12px 0 0; margin: 0; font-size: 0.95rem; }
+        .cat-spine h4 { background: linear-gradient(135deg,#3b82f6,#1d4ed8); }
+        .cat-limb h4 { background: linear-gradient(135deg,#22c55e,#16a34a); }
+        .browse-list { border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px; overflow: hidden; }
+        .browse-row {
+            padding: 10px 16px; font-size: 0.88rem; display: flex; justify-content: space-between;
+            align-items: center; border-bottom: 1px solid #f3f4f6; cursor: pointer; transition: 0.2s; gap: 8px;
+        }
+        .browse-row:last-child { border-bottom: none; }
+        .browse-row:hover { background: #f0f9ff; }
+        .browse-row .nm { font-weight: bold; }
+        .browse-row .en { color: #9ca3af; font-size: 0.78rem; }
+        .browse-row .tags { display: flex; gap: 5px; flex-wrap: wrap; flex-shrink: 0; }
+        .tag { font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; font-weight: bold; white-space: nowrap; }
+        .tag-star { background: #fef3c7; color: #b45309; }
+        .tag-normal { background: #f3f4f6; color: #6b7280; }
+        .tag-region { background: #eff6ff; color: #2563eb; }
+
+        /* Modal */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;
+        }
+        .modal-overlay.show { display: flex; animation: fadeIn 0.2s; }
+        .modal-box {
+            background: white; padding: 28px; border-radius: var(--radius);
+            width: 92%; max-width: 600px; max-height: 85vh; overflow-y: auto;
+            position: relative; box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+        .modal-close { position: absolute; top: 10px; right: 16px; font-size: 1.7rem; cursor: pointer; color: #999; background: none; border: none; line-height: 1; }
+        .modal-close:hover { color: #333; }
+        .modal-row { padding: 10px 0; border-bottom: 1px solid #f3f4f6; }
+        .modal-row:last-child { border-bottom: none; }
+        .modal-row strong { color: var(--primary); }
+
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 28px; right: 28px; background: #22c55e; color: white;
+            padding: 11px 22px; border-radius: 14px; font-weight: bold; font-size: 0.9rem;
+            z-index: 9999; opacity: 0; transform: translateY(20px); transition: all 0.3s ease;
+            pointer-events: none; box-shadow: 0 4px 15px rgba(34,197,94,0.3);
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+
+        @media (max-width: 600px) {
+            .top-bar h1 { font-size: 1.15rem; }
+            .draw-btn { padding: 13px 32px; font-size: 1.05rem; }
+            .station-name { font-size: 1.15rem; }
+            .timer-text { font-size: 1.15rem; }
+            .info-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <h1>🦴 骨傷科 OSCE 特殊檢查抽籤系統</h1>
+    <p>2026 骨傷科檢查法操作提綱 · 加權隨機 · 計時模擬 · ⭐掌握級重點標示</p>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="modal-overlay" id="modal">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+        <div id="modal-inner"></div>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- ===== Landing ===== -->
+    <div id="landing" class="landing">
+        <div class="landing-icon">🦴</div>
+        <h2>骨傷科 OSCE 檢查法操作考核</h2>
+        <p class="sub">根據 <strong>2026 骨傷科檢查法操作提綱</strong> 編製，加權隨機抽籤模擬。<br>⭐<strong>掌握級</strong>檢查被抽中機率最高且重點標示，<strong>一般級</strong>機率較低。</p>
+
+        <div class="stats">
+            <div class="stat">🦴 脊柱骨盆 <span id="ss">0</span> 項</div>
+            <div class="stat">💪 四肢 <span id="sl">0</span> 項</div>
+            <div class="stat">⭐ 掌握 <span id="sm">0</span> 項</div>
+            <div class="stat">📋 總計 <span id="st">0</span> 項</div>
+            <div class="stat">🎲 已抽 <span id="sd">0</span> 次</div>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-card" style="border-left:4px solid #3b82f6;">
+                <h4>🦴 脊柱骨盆</h4>
+                <p>頸部3項 · 胸腰背部3項 · 骨盆5項<br>⭐掌握9項 · 一般2項</p>
+            </div>
+            <div class="info-card" style="border-left:4px solid #22c55e;">
+                <h4>💪 四肢</h4>
+                <p>肩4 · 肘5 · 腕5 · 髖1 · 膝4 · 踝2<br>共 21 項檢查</p>
+            </div>
+            <div class="info-card" style="border-left:4px solid #f97316;">
+                <h4>📋 考試流程</h4>
+                <p>先考脊柱骨盆 → 再考四肢<br>每部分各計時，逐步揭曉答案</p>
+            </div>
+        </div>
+
+        <!-- Settings -->
+        <div class="settings-panel">
+            <h4>⚙️ 抽籤設定</h4>
+            <div class="pick-row">
+                <div class="pick-group">
+                    <label>🦴 脊柱骨盆抽幾站</label>
+                    <select id="pSpine">
+                        <option value="1">1 站</option>
+                        <option value="2" selected>2 站</option>
+                        <option value="3">3 站</option>
+                        <option value="4">4 站</option>
+                        <option value="5">5 站</option>
+                    </select>
+                </div>
+                <div class="pick-group">
+                    <label>💪 四肢抽幾站</label>
+                    <select id="pLimb">
+                        <option value="1">1 站</option>
+                        <option value="2" selected>2 站</option>
+                        <option value="3">3 站</option>
+                        <option value="4">4 站</option>
+                        <option value="5">5 站</option>
+                    </select>
+                </div>
+                <div class="pick-group">
+                    <label>⏱️ 每部分限時</label>
+                    <select id="pTime">
+                        <option value="180">3 分鐘</option>
+                        <option value="300" selected>5 分鐘</option>
+                        <option value="420">7 分鐘</option>
+                        <option value="600">10 分鐘</option>
+                        <option value="0">無限時</option>
+                    </select>
+                </div>
+            </div>
+            <h4 style="margin-top:10px;">⚖️ 權重設定（數值越高被抽中機率越大）</h4>
+            <div class="weight-row">
+                <span class="weight-label">⭐ 掌握級</span>
+                <input type="range" class="weight-slider" id="wStar" min="1" max="10" value="5" oninput="document.getElementById('wvStar').textContent=this.value">
+                <span class="weight-val" id="wvStar">5</span>
+            </div>
+            <div class="weight-row">
+                <span class="weight-label">📘 一般級</span>
+                <input type="range" class="weight-slider" id="wNorm" min="1" max="10" value="2" oninput="document.getElementById('wvNorm').textContent=this.value">
+                <span class="weight-val" id="wvNorm">2</span>
+            </div>
+        </div>
+
+        <button class="draw-btn" onclick="startExam()">🎲 加權隨機抽籤，開始考試！</button>
+        <p class="note">每次抽籤結果不同，多練幾次覆蓋所有檢查項目！</p>
+    </div>
+
+    <!-- ===== Exam ===== -->
+    <div id="exam" class="exam-area">
+        <div id="phaseInd" class="phase-ind"></div>
+        <div class="timer-bar">
+            <span class="timer-text" id="timerTxt">⏱️ 05:00</span>
+            <div class="timer-progress"><div class="timer-track"><div class="timer-fill" id="timerFill"></div></div></div>
+            <div class="timer-btns">
+                <button class="btn btn-purple btn-sm" onclick="revealAll()">📖 揭曉全部</button>
+                <button class="btn btn-blue btn-sm" onclick="startExam()">🔄 重抽</button>
+            </div>
+        </div>
+        <div id="stationsBox"></div>
+        <div id="bottomBtns" class="btns"></div>
+    </div>
+
+    <!-- History -->
+    <div class="history">
+        <h3>📜 抽籤歷史記錄</h3>
+        <div id="histList"><div class="history-empty">暫無記錄，開始第一次抽籤吧！</div></div>
+    </div>
+
+    <!-- Browse all -->
+    <div class="browse-section">
+        <div class="browse-toggle" id="browseToggle" onclick="toggleBrowse()">📚 展開全部題庫（點擊瀏覽所有 32 項檢查）</div>
+        <div class="browse-content" id="browseContent"></div>
+    </div>
+
+</div>
+
+<script>
+// ============================================================
+//  完整題庫 — 根據 2026 骨傷科檢查法操作提綱
+//  star: true = ⭐掌握級
+// ============================================================
+const SPINE = [
+    // ─── 頸部 ───
+    {name:"分離試驗",eng:"Cervical separation test",region:"頸部",star:true,
+     position:"坐位",
+     method:"檢查者一手托住患者頦下部，另一手托住枕部，然後逐漸向上牽引頭部。",
+     positive:"如患者感到頸部和上肢的疼痛減輕，即為陽性。",
+     indication:"神經根型頸椎病"},
+
+    {name:"椎間孔擠壓試驗",eng:"Spurling's test",region:"頸部",star:true,
+     position:"坐位",
+     method:"檢查者雙手手指相扣，以手掌面壓於患者頭頂部，同時向左右或前後屈伸頸椎。",
+     positive:"若出現頸部或上肢放射痛加重，即為陽性。",
+     indication:"神經根型頸椎病或頸椎間盤突出症"},
+
+    {name:"臂叢神經牽拉試驗",eng:"Eaten's test",region:"頸部",star:true,
+     position:"坐位，頭微屈",
+     method:"檢查者立於患者被檢查側，一手推頭部向對側，同時另一手握該側腕部作相對牽引，此時臂叢神經受牽拉。",
+     positive:"若患肢出現放射痛、麻木，則為陽性。",
+     indication:"神經根型頸椎病"},
+
+    // ─── 胸腰背部 ───
+    {name:"壓胸試驗",eng:"Chest compression test",region:"胸腰背部",star:true,
+     position:"坐位或站立位",
+     method:"檢查者兩手一手抵住其脊柱，另一手壓迫胸骨，輕輕的相對擠壓。",
+     positive:"若在胸側壁上某處出現疼痛，即為陽性。",
+     indication:"肋骨骨折"},
+
+    {name:"直腿抬高試驗",eng:"Lasègue's sign",region:"胸腰背部",star:true,
+     position:"仰臥位，兩下肢伸直靠攏",
+     method:"檢查者用一手握患者踝部，一手扶膝保持下肢伸直，逐漸抬高患者下肢。正常者可以抬高70°–90°而無任何不適感覺。\n\n【加強試驗 Bragard test】：同上述直腿抬高試驗，直腿抬高到最大限度但尚未引起疼痛的一點，在患者不注意的情況下，突然將踝關節背屈。",
+     positive:"若小於以上角度即感該下肢有傳導性疼痛或麻木者為陽性。\n\n【加強試驗陽性】：此時坐骨神經受到突然地牽拉更為緊張，而引起患肢後側放射性的劇痛，即為陽性。",
+     indication:"多見於坐骨神經痛和腰椎間盤突出症患者"},
+
+    {name:"股神經牽拉試驗",eng:"Ely test",region:"胸腰背部",star:true,
+     position:"俯臥位",
+     method:"患者俯臥位，膝關節完全屈曲，足跟接近臀部，後伸髖關節，股神經受到牽拉。",
+     positive:"患者出現大腿前方疼痛者為陽性。",
+     indication:"提示上腰部椎間盤突出的體征"},
+
+    // ─── 骨盆 ───
+    {name:"骨盆擠壓分離試驗",eng:"Pelvic compression test",region:"骨盆",star:true,
+     position:"仰臥位或側臥位",
+     method:"擠壓：檢查者用雙手分別置於髂骨翼兩側同時向中線擠壓骨盆；或者患者側臥位，檢查者擠壓其上方髂棘。\n分離：檢查者兩手分別置於兩側髂前上棘前面，兩手同時向外下方推壓。",
+     positive:"患處出現疼痛為陽性。",
+     indication:"提示骨盆骨折、骶髂關節病變"},
+
+    {name:"屈膝屈髖試驗",eng:"Knee-hip flexion test",region:"骨盆",star:false,
+     position:"仰臥位，雙腿靠攏",
+     method:"檢查者囑其盡量屈曲髖、膝關節，檢查者也可兩手推膝使髖、膝關節盡量屈曲，使臀部離開床面，腰部被動前屈。單側檢查方法相同。",
+     positive:"腰骶部發生疼痛，即為陽性。",
+     indication:"腰骶部病變（腰扭傷、勞損、腰椎關節腰骶關節、骶髂關節病變）"},
+
+    {name:"梨狀肌緊張試驗",eng:"Piriformis muscular tension test",region:"骨盆",star:true,
+     position:"仰臥位，伸直患肢",
+     method:"患肢伸直，作內收內旋轉動作，若有坐骨神經放射痛，再迅速外展外旋患肢。",
+     positive:"下肢放射痛立刻緩解，即為陽性。",
+     indication:"梨狀肌綜合徵"},
+
+    {name:"髖外展外旋試驗（4字試驗）",eng:"Patrick's test",region:"骨盆",star:true,
+     position:"仰臥位，被檢查一側下肢膝關節屈曲，髖關節屈曲外展、外旋",
+     method:"將足架在另一側膝關節上，使雙下肢呈4字形。檢查者一手放在屈曲的膝關節內側，另一手放在對側髂前上棘前面，然後兩手向下按壓。",
+     positive:"若被檢查側骶髂關節處出現疼痛即為陽性。",
+     indication:"骶髂關節病變"},
+
+    {name:"斜扳試驗",eng:"Oblique pulling test",region:"骨盆",star:false,
+     position:"側臥位，下面腿伸直，上面腿屈髖、屈膝各90°",
+     method:"檢查者一手將肩部推向背側，另一手推上面膝部向腹側，內收並內旋該側髖關節，使骨盆內旋。",
+     positive:"若發生骶髂關節疼痛即為陽性。",
+     indication:"該側骶髂關節有病變"}
+];
+
+const LIMB = [
+    // ─── 肩部 ───
+    {name:"搭肩試驗",eng:"Dugas' sign",region:"肩部",star:false,
+     position:"坐位或立位",
+     method:"肘關節取屈曲位，將手搭於對側肩部。",
+     positive:"如果手能夠搭於對側肩部，且肘部能貼近胸壁即為正常。如果手能夠搭於對側肩部，但肘部不能貼近胸壁；或者肘部能貼近胸壁，但手不能夠搭於對側肩部，均為陽性體徵。",
+     indication:"肩關節脫位"},
+
+    {name:"肱二頭肌抗阻力試驗",eng:"Biceps resistance test",region:"肩部",star:false,
+     position:"坐位或立位",
+     method:"囑患者屈肘90°，檢查者一手扶住患者肘部，一手扶住腕部，囑患者用力屈肘、外展、外旋，檢查者拉前臂對抗屈肘。",
+     positive:"如果結節間溝處疼痛為陽性。",
+     indication:"肱二頭肌肌腱滑脫或肱二頭肌長頭肌腱炎"},
+
+    {name:"疼痛弧試驗",eng:"Painful arc test",region:"肩部",star:false,
+     position:"坐位或站立位",
+     method:"囑患者肩外展或被動外展其上肢。",
+     positive:"當肩外展到60°～120°範圍時，肩部出現疼痛為陽性。這一特定區域的外展痛稱為疼痛弧。",
+     indication:"肩峰下的肩袖有病變"},
+
+    {name:"岡上肌腱斷裂試驗",eng:"Supraspinatus tear test",region:"肩部",star:false,
+     position:"坐位或站立位",
+     method:"囑患者肩外展。",
+     positive:"當外展30°～60°時，可以看到患側三角肌明顯收縮，但不能外展上舉上肢，越用力越聳肩。若被動外展患肢超過60°，則患者又能主動上舉上肢，這一特定區域的外展障礙即為陽性徵。",
+     indication:"岡上肌腱斷裂或撕裂"},
+
+    // ─── 肘部 ───
+    {name:"腕伸肌緊張（抗阻力）試驗",eng:"Cozen's Test",region:"肘部",star:false,
+     position:"任意體位",
+     method:"囑患者屈腕屈指，檢查者將手壓於各手指的背側作對抗，再囑患者抗阻力伸指及背伸腕關節。",
+     positive:"如出現肱骨外上髁疼痛即為陽性。",
+     indication:"肱骨外上髁炎（Tennis Elbow）"},
+
+    {name:"腕伸肌腱牽拉試驗",eng:"Mill's sign",region:"肘部",star:false,
+     position:"任意體位",
+     method:"檢查者一手置於肱骨外上髁，然後另一手使患者肘關節伸直，前臂旋前，腕關節屈曲。",
+     positive:"若患者肱骨外上髁區出現疼痛，則為陽性。",
+     indication:"肱骨外上髁炎，即網球肘"},
+
+    {name:"腕屈肌緊張試驗",eng:"Golfer's elbow test",region:"肘部",star:false,
+     position:"任意體位",
+     method:"囑患者握住檢查者的手指，強力伸腕握拳，檢查者手指與患者握力對抗。",
+     positive:"如肱骨內上髁部疼痛為陽性。",
+     indication:"肱骨內上髁炎（Golf Elbow）"},
+
+    {name:"叩診試驗",eng:"Tinel Test",region:"肘部",star:false,
+     position:"任意體位",
+     method:"用手指或叩診錘自遠端向病變區輕叩神經幹。",
+     positive:"可在該神經分布區的肢體遠端產生如螞蟻走行或刺痛等異樣感覺，這是神經再生或機能恢復的症狀。",
+     indication:"用以再生的感覺神經的檢查，另外，也用來檢查有無神經瘤"},
+
+    {name:"肘三角與肘直線試驗",eng:"Elbow triangle test",region:"肘部",star:false,
+     position:"任意體位",
+     method:"屈肘和伸肘，觀察肘部的骨性標記肱骨內上髁、外上髁與尺骨鷹嘴突。",
+     positive:"正常人肘關節屈曲90°時，肱骨內上髁、外上髁與尺骨鷹嘴突三點形成一個等腰三角形，稱為肘三角，肘關節伸直時，三點在一條直線上，稱為肘直線。三角形狀改變，伸直時三點不在一條直線上，即為陽性。",
+     indication:"肘關節脫位或有關節內骨折"},
+
+    // ─── 腕部 ───
+    {name:"握拳試驗（尺偏試驗）",eng:"Finkelstein test",region:"腕部",star:false,
+     position:"任意體位",
+     method:"囑患者拇指內收，然後屈曲其餘各指，在緊握拳後向尺側傾斜屈曲。",
+     positive:"若橈骨莖突部出現疼痛，即為陽性。",
+     indication:"橈骨莖突部狹窄性腱鞘炎"},
+
+    {name:"舟骨叩擊試驗",eng:"Scaphoid percussion test",region:"腕部",star:false,
+     position:"任意體位",
+     method:"使患手偏向橈側，叩擊第3掌骨頭部。",
+     positive:"若舟骨骨折時，可產生劇烈的叩擊痛。有時叩擊第2掌骨頭時也可出現劇烈疼痛，即為陽性。",
+     indication:"手舟狀骨骨折"},
+
+    {name:"屈腕試驗",eng:"Phalen test",region:"腕部",star:false,
+     position:"坐位",
+     method:"屈肘，前臂上舉，雙腕關節同時屈曲90°，1分鐘內。",
+     positive:"患側會誘發出正中神經刺激症狀，即橈側三個半手指疼痛或麻木的感覺過敏或遲鈍為陽性，陽性率為70%左右。",
+     indication:"腕管綜合症"},
+
+    {name:"指淺屈肌試驗",eng:"Flexor digitorum superficialis test",region:"腕部",star:false,
+     position:"任意體位",
+     method:"將患者的手指固定於伸直位，然後囑患者屈曲需要檢查的手指的近節指間關節，這樣可以使指淺屈肌單獨運動。",
+     positive:"如果關節屈曲正常，則表明指淺屈肌是完整的；若不能屈曲，則該肌腱有斷裂。",
+     indication:"指淺屈肌肌腱斷裂"},
+
+    {name:"指深屈肌試驗",eng:"Flexor digitorum profundus test",region:"腕部",star:false,
+     position:"任意體位",
+     method:"將患者掌指關節和近端指間關節固定在伸直位，然後讓患者屈曲遠端指間關節。",
+     positive:"若能正常屈曲，則表明該肌腱有功能；若不能屈曲，則該肌腱可能有斷裂或該肌肉的神經支配發生障礙。",
+     indication:"指深屈肌肌腱斷裂或神經損傷"},
+
+    // ─── 髖部 ───
+    {name:"髖關節過伸試驗",eng:"Yeoman's Test",region:"髖部",star:false,
+     position:"俯臥位",
+     method:"屈膝90°，檢查者一手握住踝部，將下肢提起，使髖關節過伸。",
+     positive:"若骨盆亦隨之抬起，即為陽性。",
+     indication:"說明有腰大肌膿腫、髖關節早期結核或關節強直"},
+
+    // ─── 膝部 ───
+    {name:"迴旋擠壓試驗",eng:"McMurray's test",region:"膝部",star:false,
+     position:"仰臥位",
+     method:"使患側髖關節和膝關節充分屈曲，盡量使足跟碰觸臀部。\n\n查內側半月板：檢查者一手握住膝部以穩定大腿及注意膝關節內的感覺，另一手握住足部使小腿在充分內收、外旋位伸直。\n\n查外側半月板：在使小腿充分外展、內旋位伸直膝關節。",
+     positive:"在伸直過程中，股骨髁經過半月板損傷部位時，因產生摩擦可感觸到或聽到彈響聲，同時患者感覺膝關節內側（或外側）有彈響和疼痛。",
+     indication:"用於檢查半月板損傷"},
+
+    {name:"擠壓研磨試驗",eng:"Apley's test",region:"膝部",star:false,
+     position:"俯臥位，膝關節屈曲90°",
+     method:"檢查者用小腿壓在患者大腿下端後側作固定，雙手握住足跟。\n\n①沿小腿縱軸方向施加壓力的同時作小腿的外展外旋或內收內旋活動 → 查半月板。\n②提起小腿作外展外旋或內收內旋活動 → 查韌帶。",
+     positive:"①壓＋旋轉有疼痛或彈響 → 外側或內側半月板損傷。\n②提＋旋轉引起疼痛 → 外側或內側副韌帶損傷。",
+     indication:"半月板損傷 / 側副韌帶損傷"},
+
+    {name:"膝關節抽屜試驗",eng:"Drawer test",region:"膝部",star:false,
+     position:"坐位或仰臥位，膝關節屈曲90°",
+     method:"檢查者臀部坐於患肢足背，雙手握住患者小腿上段推拉。",
+     positive:"如能明顯拉向前方約1cm → 前抽屜試驗陽性（前交叉韌帶損傷）；\n若能推向後約1cm → 後抽屜試驗陽性（後交叉韌帶損傷）；\n若前後均能推拉1cm → 前後抽屜試驗陽性（前後交叉韌帶損傷）。",
+     indication:"前/後交叉韌帶損傷"},
+
+    {name:"側方擠壓試驗（膝關節分離試驗）",eng:"Knee valgus stress test",region:"膝部",star:false,
+     position:"臥位或坐位伸膝位",
+     method:"患者伸膝並固定大腿，檢查者用一手握住踝部，另一手扶住膝部，膝關節在伸直時，作被動外翻或內翻動作。",
+     positive:"如果出現疼痛或內翻外翻角度超出正常範圍為陽性。",
+     indication:"提示有側副韌帶損傷或斷裂"},
+
+    // ─── 踝部 ───
+    {name:"伸踝試驗",eng:"Homans' test",region:"踝部",star:false,
+     position:"臥位或坐位",
+     method:"檢查者讓患者伸直小腿，然後用力背伸踝關節。",
+     positive:"如小腿肌肉發生疼痛，即為陽性。\n在小腿肌肉深部觸診時出現疼痛，可進一步證實。",
+     indication:"小腿深靜脈血栓性炎（Deep Venous Thrombosis, DVT）"},
+
+    {name:"蹠骨頭擠壓試驗",eng:"Metatarsal squeeze test",region:"踝部",star:false,
+     position:"坐位或臥位",
+     method:"檢查者一手握住足跟部，另一手橫行擠壓5個蹠骨頭。",
+     positive:"若出現前足放射樣疼痛者為陽性。",
+     indication:"提示蹠痛病、扁平足、莫頓病（Morton's disease）"}
+];
+
+// ============================================================
+//  全局狀態
+// ============================================================
+let timerInterval = null, timeLeft = 0, timerTotal = 300;
+let phase = 0, allStations = [], drawCount = 0, hist = [];
+let browseOpen = false;
+
+// ============================================================
+//  工具函數
+// ============================================================
+function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function shuffle(a) {
+    const b = [...a];
+    for (let i = b.length-1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; }
+    return b;
+}
+
+function getW(item) {
+    return item.star ? parseInt(document.getElementById('wStar').value) : parseInt(document.getElementById('wNorm').value);
+}
+
+function weightedPick(arr, n) {
+    let pool = [];
+    arr.forEach((item, idx) => { const w = getW(item); for (let i = 0; i < w; i++) pool.push(idx); });
+    let sh = shuffle(pool), picked = new Set(), res = [];
+    for (let idx of sh) {
+        if (!picked.has(idx)) { picked.add(idx); res.push(arr[idx]); if (res.length >= n) break; }
+    }
+    while (res.length < n) {
+        let rem = arr.filter((_,i) => !picked.has(i));
+        if (!rem.length) break;
+        res.push(rem[0]); picked.add(arr.indexOf(rem[0]));
+    }
+    return res;
+}
+
+// ============================================================
+//  考試邏輯
+// ============================================================
+function startExam() {
+    const nS = parseInt(document.getElementById('pSpine').value);
+    const nL = parseInt(document.getElementById('pLimb').value);
+    timerTotal = parseInt(document.getElementById('pTime').value);
+
+    const sp = weightedPick(SPINE, nS);
+    const lm = weightedPick(LIMB, nL);
+
+    allStations = []; let num = 1;
+    sp.forEach(s => allStations.push({num: num++, type:'脊柱骨盆', badge:'badge-spine', data:s}));
+    lm.forEach(s => allStations.push({num: num++, type:'四肢', badge:'badge-limb', data:s}));
+
+    drawCount++;
+    const now = new Date();
+    const ts = String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+    hist.unshift({time:ts, names:allStations.map(s=>(s.data.star?'⭐':'')+s.data.name).join('、')});
+    if (hist.length > 20) hist.pop();
+    renderHist();
+    document.getElementById('sd').textContent = drawCount;
+
+    document.getElementById('landing').style.display = 'none';
+    document.getElementById('exam').classList.add('active');
+    phase = 1;
+    renderPhase();
+    document.getElementById('exam').scrollIntoView({behavior:'smooth',block:'start'});
+    toast('🎲 抽籤完成！加油！');
+}
+
+function renderPhase() {
+    let stations, label, color, bg;
+    if (phase === 1) {
+        stations = allStations.filter(s => s.type === '脊柱骨盆');
+        label = '🦴 第一部分：脊柱骨盆檢查'; color = '#1d4ed8'; bg = 'linear-gradient(135deg,#dbeafe,#eff6ff)';
+    } else {
+        stations = allStations.filter(s => s.type === '四肢');
+        label = '💪 第二部分：四肢特殊檢查'; color = '#166534'; bg = 'linear-gradient(135deg,#dcfce7,#f0fdf4)';
+    }
+
+    const pi = document.getElementById('phaseInd');
+    pi.style.background = bg;
+    const timeLabel = timerTotal > 0 ? '（'+timerTotal/60+' 分鐘）' : '（無限時）';
+    pi.innerHTML = `<span style="color:${color};font-weight:bold;font-size:1.05rem;">${label}${timeLabel}</span>
+        <span style="background:${color};color:white;padding:4px 14px;border-radius:20px;font-size:.82rem;font-weight:bold;">第 ${phase}/2 部分</span>`;
+
+    const box = document.getElementById('stationsBox');
+    box.innerHTML = stations.map((s, idx) => {
+        const gi = phase===1 ? idx : idx + parseInt(document.getElementById('pSpine').value);
+        const d = s.data;
+        const starBadge = d.star ? `<span class="badge badge-star">⭐ 掌握</span>` : '';
+        const starClass = d.star ? ' is-star' : '';
+        return `
+        <div class="station${starClass}">
+            <div class="station-header">
+                <div class="station-badges">
+                    <span class="badge ${s.badge}">第 ${s.num} 站：${s.type}</span>
+                    ${starBadge}
+                    <span class="badge badge-region">📍 ${d.region}</span>
+                </div>
+                <div class="station-name">${d.star ? '⭐ ' : ''}${d.name}</div>
+                <div class="station-eng">${d.eng}</div>
+            </div>
+            <div class="station-steps">
+                ${mkStep(gi,0,'1️⃣ 請說出患者體位',d.position)}
+                ${mkStep(gi,1,'2️⃣ 請演示操作方法',d.method)}
+                ${mkStep(gi,2,'3️⃣ 請說出陽性結果',d.positive)}
+                ${mkStep(gi,3,'4️⃣ 請說出傷病提示',d.indication)}
+            </div>
+        </div>`;
+    }).join('');
+
+    const btns = document.getElementById('bottomBtns');
+    let h = `<button class="btn btn-purple" onclick="revealAll()">📖 揭曉全部答案</button>`;
+    if (phase === 1) h += `<button class="btn btn-green" onclick="goPhase2()">💪 進入四肢檢查 →</button>`;
+    h += `<button class="btn btn-blue" onclick="startExam()">🔄 重新抽籤</button>`;
+    h += `<button class="btn btn-gray" onclick="backHome()">🏠 返回首頁</button>`;
+    btns.innerHTML = h;
+
+    if (timerTotal > 0) startTimer(timerTotal);
+    else { clearInterval(timerInterval); document.getElementById('timerTxt').textContent='⏱️ 無限時'; document.getElementById('timerFill').style.width='100%'; document.getElementById('timerFill').style.background='linear-gradient(90deg,#22c55e,#16a34a)'; }
+}
+
+function mkStep(si,sti,label,answer) {
+    const aid='a'+si+'-'+sti, bid='b'+si+'-'+sti;
+    return `<div class="step"><div class="step-hd" onclick="reveal('${aid}','${bid}')">
+        <span class="step-label">${label}</span>
+        <button class="step-btn" id="${bid}">顯示答案 👆</button>
+    </div><div class="step-ans" id="${aid}">${answer}</div></div>`;
+}
+
+function reveal(aid,bid) {
+    const a=document.getElementById(aid), b=document.getElementById(bid);
+    if(!a||a.classList.contains('show')) return;
+    a.classList.add('show'); b.textContent='✅ 已揭曉'; b.classList.add('done');
+}
+
+function revealAll() {
+    document.querySelectorAll('#stationsBox .step-ans').forEach(el=>el.classList.add('show'));
+    document.querySelectorAll('#stationsBox .step-btn').forEach(b=>{b.textContent='✅ 已揭曉';b.classList.add('done');});
+}
+
+function goPhase2() {
+    clearInterval(timerInterval); phase=2; renderPhase();
+    document.getElementById('exam').scrollIntoView({behavior:'smooth',block:'start'});
+    toast('💪 進入四肢檢查！');
+}
+
+function backHome() {
+    clearInterval(timerInterval);
+    document.getElementById('exam').classList.remove('active');
+    document.getElementById('landing').style.display='';
+    window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// Timer
+function startTimer(sec) {
+    clearInterval(timerInterval); timeLeft=sec; timerTotal=sec; updateTimer();
+    timerInterval = setInterval(()=>{
+        timeLeft--;updateTimer();
+        if(timeLeft<=0){clearInterval(timerInterval);
+            const msg=phase===1?'⏰ 脊柱骨盆時間到！':'⏰ 四肢時間到！';
+            document.getElementById('timerTxt').textContent=msg; toast(msg);}
+    },1000);
+}
+function updateTimer() {
+    const m=Math.floor(timeLeft/60), s=timeLeft%60;
+    const el=document.getElementById('timerTxt');
+    el.textContent='⏱️ '+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    el.classList.toggle('warn',timeLeft<=60);
+    const pct=Math.max(0,timeLeft/timerTotal*100);
+    const f=document.getElementById('timerFill');
+    f.style.width=pct+'%';
+    f.style.background=timeLeft<=60?'#ef4444':'linear-gradient(90deg,#22c55e,#16a34a)';
+}
+
+// History
+function renderHist() {
+    const c=document.getElementById('histList');
+    if(!hist.length){c.innerHTML='<div class="history-empty">暫無記錄</div>';return;}
+    c.innerHTML=hist.map((h,i)=>`<div class="history-item"><span>🎲 第 ${drawCount-i} 次：${h.names}</span><span class="time">${h.time}</span></div>`).join('');
+}
+
+// Browse
+function toggleBrowse() {
+    browseOpen=!browseOpen;
+    const c=document.getElementById('browseContent'), t=document.getElementById('browseToggle');
+    if(browseOpen){c.classList.add('show');t.textContent='📚 收起題庫';renderBrowse();}
+    else{c.classList.remove('show');t.textContent='📚 展開全部題庫（點擊瀏覽所有 32 項檢查）';}
+}
+
+function renderBrowse() {
+    const c=document.getElementById('browseContent');
+    let h='';
+
+    h+=`<div class="browse-cat cat-spine"><h4>🦴 脊柱骨盆檢查（${SPINE.length} 項）· ⭐掌握 ${SPINE.filter(x=>x.star).length} 項</h4><div class="browse-list">`;
+    SPINE.forEach((item,i)=>{
+        const starTag = item.star ? `<span class="tag tag-star">⭐ 掌握</span>` : `<span class="tag tag-normal">一般</span>`;
+        h+=`<div class="browse-row" onclick="showDetail('spine',${i})">
+            <div><span class="nm">${item.star?'⭐ ':''}${item.name}</span><br><span class="en">${item.eng}</span></div>
+            <div class="tags">${starTag}<span class="tag tag-region">${item.region}</span></div></div>`;
+    });
+    h+=`</div></div>`;
+
+    h+=`<div class="browse-cat cat-limb"><h4>💪 四肢特殊檢查（${LIMB.length} 項）</h4><div class="browse-list">`;
+    LIMB.forEach((item,i)=>{
+        h+=`<div class="browse-row" onclick="showDetail('limb',${i})">
+            <div><span class="nm">${item.name}</span><br><span class="en">${item.eng}</span></div>
+            <div class="tags"><span class="tag tag-normal">一般</span><span class="tag tag-region">${item.region}</span></div></div>`;
+    });
+    h+=`</div></div>`;
+
+    c.innerHTML=h;
+}
+
+function showDetail(type,idx) {
+    const item = type==='spine' ? SPINE[idx] : LIMB[idx];
+    const starLabel = item.star ? '⭐ 掌握' : '📘 一般';
+    document.getElementById('modal-inner').innerHTML=`
+        <h2 style="color:var(--primary);margin:0 0 4px;">${item.star?'⭐ ':''}${item.name}</h2>
+        <p style="color:#9ca3af;margin:0 0 14px;">${item.eng}　·　📍 ${item.region}　·　${starLabel}</p>
+        <div class="modal-row"><strong>🪑 患者體位：</strong><br>${item.position}</div>
+        <div class="modal-row"><strong>✋ 操作方法：</strong><br><span style="white-space:pre-line;">${item.method}</span></div>
+        <div class="modal-row"><strong>✅ 陽性結果：</strong><br><span style="white-space:pre-line;">${item.positive}</span></div>
+        <div class="modal-row"><strong>🏥 傷病提示：</strong><br>${item.indication}</div>`;
+    document.getElementById('modal').classList.add('show');
+}
+function closeModal(){document.getElementById('modal').classList.remove('show');}
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+// Init stats
+const starCount = SPINE.filter(x=>x.star).length + LIMB.filter(x=>x.star).length;
+document.getElementById('ss').textContent = SPINE.length;
+document.getElementById('sl').textContent = LIMB.length;
+document.getElementById('sm').textContent = starCount;
+document.getElementById('st').textContent = SPINE.length + LIMB.length;
+</script>
+</body>
+</html>
