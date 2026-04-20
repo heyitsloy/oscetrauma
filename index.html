@@ -257,6 +257,9 @@
 </div>
 
 <div class="container">
+<button class="btn btn-red btn-sm" style="margin-top:20px;" onclick="showLowFamiliarReview()">
+  ❗ 檢視唔熟題目回顧 (<span id="lowFamCount">0</span>)
+</button>
 
     <!-- ===== Landing ===== -->
     <div id="landing" class="landing">
@@ -707,6 +710,10 @@ function renderPhase() {
     if (phase === 1) h += `<button class="btn btn-green" onclick="goPhase2()">🦴 進入脊柱骨盆檢查 →</button>`;
     h += `<button class="btn btn-blue" onclick="startExam()">🔄 重新抽籤</button>`;
     h += `<button class="btn btn-gray" onclick="backHome()">🏠 返回首頁</button>`;
+    if(lowFamiliarSet.size > 0) { 
+  h += `<button class="btn btn-sm btn-red" onclick="showLowFamiliarReview()" style="background:#ef4444; margin-left:8px;">❗ 檢視唔熟 (${lowFamiliarSet.size})</button>`;
+}
+
     btns.innerHTML = h;
 
     if (timerTotal > 0) startTimer(timerTotal);
@@ -828,12 +835,70 @@ function closeModal(){document.getElementById('modal').classList.remove('show');
 document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
 
 // 新增：切換標記唔熟狀態
-function toggleLowFamiliar(key) {
-    if (lowFamiliarSet.has(key)) lowFamiliarSet.delete(key);
-    else lowFamiliarSet.add(key);
 
+function toggleLowFamiliar(key) {
+  if(lowFamiliarSet.has(key)) lowFamiliarSet.delete(key);
+  else lowFamiliarSet.add(key);
+
+  // 如果在考試中，重新渲染題目區
+  if(document.getElementById('exam').classList.contains('active')) {
     renderPhase();
-    toast(lowFamiliarSet.has(key) ? '已標記為唔熟' : '已取消標記');
+  }
+  
+  // 如果 modal 是「唔熟回顧頁」，重新更新清單
+  if(document.getElementById('modal').classList.contains('show') 
+     && document.getElementById('modal-inner').innerHTML.includes('唔熟題目回顧')) {
+    showLowFamiliarReview();
+  }
+
+  toast(lowFamiliarSet.has(key) ? '已標記為唔熟' : '已取消標記');
+}    
+function showLowFamiliarReview() {
+  if(lowFamiliarSet.size === 0) {
+    toast('無標記唔熟嘅題目');
+    return;
+  }
+  
+  // 產生唔熟列表內容html
+  let html = `<h2 style="color:var(--primary); margin-bottom:12px;"> 唔熟題目回顧（${lowFamiliarSet.size} 項）</h2>`;
+  html += '<div style="max-height:60vh; overflow-y:auto; padding:6px;">';
+
+  // 抓取所有標記唔熟的題目資料
+  const items = [];
+  lowFamiliarSet.forEach(key => {
+    // key格式 phase-num，例如 "1-2"
+    const [ph, numStr] = key.split('-');
+    const num = parseInt(numStr);
+    // 從 allStations 找題目
+    const st = allStations.find(s => s.num === num && (ph == '1' ? s.type === '四肢' : s.type === '脊柱骨盆'));
+    if(st) items.push({key, station: st});
+  });
+
+  if(items.length === 0) {
+    html += '<div>（目前所選擇的唔熟題目不在本次抽籤內）</div>';
+  } else {
+    html += '<ul style="list-style:none; padding:0;">';
+    items.forEach(({key, station}) => {
+      html += `<li style="margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:8px;">
+        <div>
+          <strong>${station.data.name}</strong> <small style="color:#666;">(${station.type})</small>
+          <button style="background:#ef4444; color:#fff; border:none; padding:4px 10px; border-radius:12px; cursor:pointer; float:right;"
+            onclick="toggleLowFamiliar('${key}'); showLowFamiliarReview();">取消標記</button>
+        </div>
+        <div style="font-size:0.86rem; color:#777;">${station.data.eng} · 📍 ${station.data.region}</div>
+      </li>`;
+    });
+    html += '</ul>';
+  }
+  html += '</div>';
+
+  document.getElementById('modal-inner').innerHTML = html;
+  document.getElementById('modal').classList.add('show');
+}
+
+function updateLowFamCount() {
+  const c = document.getElementById('lowFamCount');
+  if(c) c.textContent = lowFamiliarSet.size;
 }
     
 // Init stats
