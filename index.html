@@ -331,7 +331,9 @@
                 <input type="range" class="weight-slider" id="wStar" min="1" max="10" value="5" oninput="document.getElementById('wvStar').textContent=this.value">
                 <span class="weight-val" id="wvStar">5</span>
             </div>
-            <div class="weight-row">
+            <div class
+                
+                ="weight-row">
                 <span class="weight-label">一般</span>
                 <input type="range" class="weight-slider" id="wNorm" min="1" max="10" value="2" oninput="document.getElementById('wvNorm').textContent=this.value">
                 <span class="weight-val" id="wvNorm">2</span>
@@ -339,6 +341,7 @@
         </div>
 
         <button class="draw-btn" onclick="startExam()">🎲 隨機抽籤開始考試！</button>
+        <button class="btn btn-blue" style="margin-top:12px;" onclick="showAllStationList()">📚 全部題庫瀏覽 & 標註唔熟</button>
     </div>
 
     <!-- ===== Exam ===== -->
@@ -860,41 +863,98 @@ function showLowFamiliarReview() {
     return;
   }
   
-  // 產生唔熟列表內容html
   let html = `<h2 style="color:var(--primary); margin-bottom:12px;"> 唔熟題目回顧（${lowFamiliarSet.size} 項）</h2>`;
   html += '<div style="max-height:60vh; overflow-y:auto; padding:6px;">';
 
-  // 抓取所有標記唔熟的題目資料
   const items = [];
+
   lowFamiliarSet.forEach(key => {
-    // key格式 phase-num，例如 "1-2"
-    const [ph, numStr] = key.split('-');
-    const num = parseInt(numStr);
-    // 從 allStations 找題目
-    const st = allStations.find(s => s.num === num && (ph == '1' ? s.type === '四肢' : s.type === '脊柱骨盆'));
-    if(st) items.push({key, station: st});
+    // key格式可能 "phase-num" 或 "spine-i" / "limb-i"
+    if(key.startsWith('spine-')) {
+      const idx = parseInt(key.split('-')[1]);
+      const item = SPINE[idx];
+      if(item) items.push({key, source:'脊柱骨盆', data:item});
+    } else if(key.startsWith('limb-')) {
+      const idx = parseInt(key.split('-')[1]);
+      const item = LIMB[idx];
+      if(item) items.push({key, source:'四肢', data:item});
+    } else {
+      // 舊格式，嘗試在本次allStations找
+      const [ph, numStr] = key.split('-');
+      const num = parseInt(numStr);
+      const st = allStations.find(s => s.num === num && (ph == '1' ? s.type === '四肢' : s.type === '脊柱骨盆'));
+      if(st) items.push({key, source: st.type, data: st.data});
+    }
   });
 
   if(items.length === 0) {
-    html += '<div>（目前所選擇的唔熟題目不在本次抽籤內）</div>';
+    html += '<div>（標記嘅唔熟題目目前不在題庫內）</div>';
   } else {
     html += '<ul style="list-style:none; padding:0;">';
-    items.forEach(({key, station}) => {
+    items.forEach(({key, source, data}) => {
       html += `<li style="margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:8px;">
         <div>
-          <strong>${station.data.name}</strong> <small style="color:#666;">(${station.type})</small>
+          <strong>${data.name}</strong> <small style="color:#666;">(${source})</small>
           <button style="background:#ef4444; color:#fff; border:none; padding:4px 10px; border-radius:12px; cursor:pointer; float:right;"
             onclick="toggleLowFamiliar('${key}'); showLowFamiliarReview();">取消標記</button>
         </div>
-        <div style="font-size:0.86rem; color:#777;">${station.data.eng} · 📍 ${station.data.region}</div>
+        <div style="font-size:0.86rem; color:#777;">${data.eng} · 📍 ${data.region}</div>
       </li>`;
     });
     html += '</ul>';
   }
-  html += '</div>';
+  
+  html += '</div><button class="btn btn-gray" onclick="closeModal()">關閉</button>';
 
   document.getElementById('modal-inner').innerHTML = html;
   document.getElementById('modal').classList.add('show');
+}
+
+function showAllStationList() {
+  const modal = document.getElementById('modal');
+  const modalInner = document.getElementById('modal-inner');
+  let html = `
+    <h3>全部題庫 (可標註唔熟)</h3>
+    <div style="max-height: 400px; overflow-y: auto; margin-top: 1rem; font-size: 14px;">
+      <h4>🦴 脊柱骨盆</h4>
+  `;
+
+  SPINE.forEach((item,i) => {
+    const key = 'spine-' + i; 
+    const content = item.star ? '⭐ ' + item.name : item.name;
+    const marked = lowFamiliarSet.has(key);
+    html += `
+      <div style="padding:0.3rem; border-bottom:1px solid #ddd; display:flex; justify-content:space-between; align-items:center;">
+        <div>${content} <small style="color:#666;">${item.eng}</small></div>
+        <button 
+          style="background:${marked ? '#ef4444' : '#ccc'}; border:none; color:white; padding: 0.2rem 0.5rem; border-radius: 4px; cursor:pointer;"
+          onclick="toggleLowFamiliar('${key}'); showAllStationList();"
+        >${marked ? '❌ 取消唔熟' : '❗ 標註唔熟'}</button>
+      </div>
+    `;
+  });
+
+  html += `<h4 style="margin-top: 1rem;">💪 四肢特殊檢查</h4>`;
+
+  LIMB.forEach((item,i) => {
+    const key = 'limb-' + i;
+    const content = item.star ? '⭐ ' + item.name : item.name;
+    const marked = lowFamiliarSet.has(key);
+    html += `
+      <div style="padding:0.3rem; border-bottom:1px solid #ddd; display:flex; justify-content:space-between; align-items:center;">
+        <div>${content} <small style="color:#666;">${item.eng}</small></div>
+        <button 
+          style="background:${marked ? '#ef4444' : '#ccc'}; border:none; color:white; padding: 0.2rem 0.5rem; border-radius: 4px; cursor:pointer;"
+          onclick="toggleLowFamiliar('${key}'); showAllStationList();"
+        >${marked ? '❌ 取消唔熟' : '❗ 標註唔熟'}</button>
+      </div>
+    `;
+  });
+
+  html += `</div> <button class="btn btn-gray" onclick="closeModal()">關閉</button>`;
+
+  modalInner.innerHTML = html;
+  modal.classList.add('show');
 }
 
 function updateLowFamCount() {
@@ -909,7 +969,10 @@ document.getElementById('sl').textContent = LIMB.length;
 document.getElementById('sm').textContent = starCount;
 document.getElementById('st').textContent = SPINE.length + LIMB.length;
 updateLowFamCount();
-    
+toggleLowFamiliar('spine-0');
+toggleLowFamiliar('limb-5');
+updateLowFamCount();
+showAllStationList();
 </script>
 </body>
 </html>
