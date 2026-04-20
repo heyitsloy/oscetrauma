@@ -584,7 +584,7 @@ const LIMB = [
 let timerInterval = null, timeLeft = 0, timerTotal = 300;
 let phase = 0, allStations = [], drawCount = 0, hist = [];
 let browseOpen = false;
-
+const lowFamiliarSet = new Set(); // 用於存放標記唔熟題目，key格式"phase-題號"
 // ============================================================
 //  工具函數
 // ============================================================
@@ -641,66 +641,81 @@ function startExam() {
     if (hist.length > 20) hist.pop();
     renderHist();
     document.getElementById('sd').textContent = drawCount;
-
+    lowFamiliarSet.clear();
     document.getElementById('landing').style.display = 'none';
     document.getElementById('exam').classList.add('active');
     phase = 1;
     renderPhase();
     document.getElementById('exam').scrollIntoView({behavior:'smooth',block:'start'});
-    toast('🎲 抽籤完成！加油！');
+    toast('抽完加油！');
 }
 
+    // 修改: renderPhase 內調整順序和新增標記唔熟按鈕
 function renderPhase() {
     let stations, label, color, bg;
     if (phase === 1) {
-        stations = allStations.filter(s => s.type === '脊柱骨盆');
-        label = '🦴 第一部分：脊柱骨盆檢查'; color = '#1d4ed8'; bg = 'linear-gradient(135deg,#dbeafe,#eff6ff)';
-    } else {
         stations = allStations.filter(s => s.type === '四肢');
-        label = '💪 第二部分：四肢特殊檢查'; color = '#166534'; bg = 'linear-gradient(135deg,#dcfce7,#f0fdf4)';
+        label = '💪 第一部分：四肢特殊檢查'; color = '#166534'; bg = 'linear-gradient(135deg,#dcfce7,#f0fdf4)';
+    } else {
+        stations = allStations.filter(s => s.type === '脊柱骨盆');
+        label = '🦴 第二部分：脊柱骨盆檢查'; color = '#1d4ed8'; bg = 'linear-gradient(135deg,#dbeafe,#eff6ff)';
     }
 
     const pi = document.getElementById('phaseInd');
     pi.style.background = bg;
-    const timeLabel = timerTotal > 0 ? '（'+timerTotal/60+' 分鐘）' : '（無限時）';
+    const timeLabel = timerTotal > 0 ? '（' + timerTotal / 60 + ' 分鐘）' : '（無限時）';
     pi.innerHTML = `<span style="color:${color};font-weight:bold;font-size:1.05rem;">${label}${timeLabel}</span>
         <span style="background:${color};color:white;padding:4px 14px;border-radius:20px;font-size:.82rem;font-weight:bold;">第 ${phase}/2 部分</span>`;
 
     const box = document.getElementById('stationsBox');
     box.innerHTML = stations.map((s, idx) => {
-        const gi = phase===1 ? idx : idx + parseInt(document.getElementById('pSpine').value);
-        const d = s.data;
-        const starBadge = d.star ? `<span class="badge badge-star">⭐ 掌握</span>` : '';
-        const starClass = d.star ? ' is-star' : '';
+        const starBadge = s.data.star ? `<span class="badge badge-star">⭐ 掌握</span>` : '';
+        const starClass = s.data.star ? ' is-star' : '';
+
+        // 判斷是否標記唔熟
+        const key = phase + '-' + s.num;
+        const lowFam = lowFamiliarSet.has(key);
+        const lowLabel = lowFam ? '<span style="color:#ef4444; font-weight:bold;">唔熟</span>' : '';
+        const btnText = lowFam ? '取消標記' : '唔熟';
+
         return `
         <div class="station${starClass}">
             <div class="station-header">
                 <div class="station-badges">
                     <span class="badge ${s.badge}">第 ${s.num} 站：${s.type}</span>
                     ${starBadge}
-                    <span class="badge badge-region">📍 ${d.region}</span>
+                    <span class="badge badge-region">📍 ${s.data.region}</span>
                 </div>
-                <div class="station-name">${d.star ? '⭐ ' : ''}${d.name}</div>
-                <div class="station-eng">${d.eng}</div>
+                <div class="station-name">${s.data.star ? '⭐ ' : ''}${s.data.name} ${lowLabel}</div>
+                <div class="station-eng">${s.data.eng}</div>
             </div>
             <div class="station-steps">
-                ${mkStep(gi,0,'1️⃣ 請說出患者體位',d.position)}
-                ${mkStep(gi,1,'2️⃣ 請演示操作方法',d.method)}
-                ${mkStep(gi,2,'3️⃣ 請說出陽性結果',d.positive)}
-                ${mkStep(gi,3,'4️⃣ 請說出傷病提示',d.indication)}
+                ${mkStep(idx, 0, '1️⃣ 請說出患者體位', s.data.position)}
+                ${mkStep(idx, 1, '2️⃣ 請演示操作方法', s.data.method)}
+                ${mkStep(idx, 2, '3️⃣ 請說出陽性結果', s.data.positive)}
+                ${mkStep(idx, 3, '4️⃣ 請說出傷病提示', s.data.indication)}
+            </div>
+            <div style="padding:10px 16px; text-align:right;">
+                <button style="background:#ef4444; color:#fff; border:none; padding:6px 14px; border-radius:10px; cursor:pointer;"
+                    onclick="toggleLowFamiliar('${key}')">${btnText}</button>
             </div>
         </div>`;
     }).join('');
 
     const btns = document.getElementById('bottomBtns');
-    let h = `<button class="btn btn-purple" onclick="revealAll()">📖 揭曉全部答案</button>`;
-    if (phase === 1) h += `<button class="btn btn-green" onclick="goPhase2()">💪 進入四肢檢查 →</button>`;
+    let h = `<button class="btn btn-purple" onclick="revealAll()">📖 揭曉答案</button>`;
+    if (phase === 1) h += `<button class="btn btn-green" onclick="goPhase2()">🦴 進入脊柱骨盆檢查 →</button>`;
     h += `<button class="btn btn-blue" onclick="startExam()">🔄 重新抽籤</button>`;
     h += `<button class="btn btn-gray" onclick="backHome()">🏠 返回首頁</button>`;
     btns.innerHTML = h;
 
     if (timerTotal > 0) startTimer(timerTotal);
-    else { clearInterval(timerInterval); document.getElementById('timerTxt').textContent='⏱️ 無限時'; document.getElementById('timerFill').style.width='100%'; document.getElementById('timerFill').style.background='linear-gradient(90deg,#22c55e,#16a34a)'; }
+    else {
+        clearInterval(timerInterval);
+        document.getElementById('timerTxt').textContent = '⏱️ 無限時';
+        document.getElementById('timerFill').style.width = '100%';
+        document.getElementById('timerFill').style.background = 'linear-gradient(90deg,#22c55e,#16a34a)';
+    }
 }
 
 function mkStep(si,sti,label,answer) {
@@ -723,9 +738,11 @@ function revealAll() {
 }
 
 function goPhase2() {
-    clearInterval(timerInterval); phase=2; renderPhase();
-    document.getElementById('exam').scrollIntoView({behavior:'smooth',block:'start'});
-    toast('💪 進入四肢檢查！');
+    clearInterval(timerInterval);
+    phase = 2;
+    renderPhase();
+    document.getElementById('exam').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    toast('🦴 進入脊柱骨盆檢查！');
 }
 
 function backHome() {
@@ -810,6 +827,15 @@ function showDetail(type,idx) {
 function closeModal(){document.getElementById('modal').classList.remove('show');}
 document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
 
+// 新增：切換標記唔熟狀態
+function toggleLowFamiliar(key) {
+    if (lowFamiliarSet.has(key)) lowFamiliarSet.delete(key);
+    else lowFamiliarSet.add(key);
+
+    renderPhase();
+    toast(lowFamiliarSet.has(key) ? '已標記為唔熟' : '已取消標記');
+}
+    
 // Init stats
 const starCount = SPINE.filter(x=>x.star).length + LIMB.filter(x=>x.star).length;
 document.getElementById('ss').textContent = SPINE.length;
