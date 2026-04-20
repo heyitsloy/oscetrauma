@@ -645,6 +645,7 @@ function startExam() {
     renderHist();
     document.getElementById('sd').textContent = drawCount;
     lowFamiliarSet.clear();
+    updateLowFamCount(); 
     document.getElementById('landing').style.display = 'none';
     document.getElementById('exam').classList.add('active');
     phase = 1;
@@ -851,6 +852,7 @@ function toggleLowFamiliar(key) {
     showLowFamiliarReview();
   }
 
+     updateLowFamCount();
   toast(lowFamiliarSet.has(key) ? '已標記為唔熟' : '已取消標記');
 }    
 function showLowFamiliarReview() {
@@ -907,6 +909,8 @@ document.getElementById('ss').textContent = SPINE.length;
 document.getElementById('sl').textContent = LIMB.length;
 document.getElementById('sm').textContent = starCount;
 document.getElementById('st').textContent = SPINE.length + LIMB.length;
+updateLowFamCount();
+    
 </script>
 </body>
 </html>
