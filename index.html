@@ -244,7 +244,7 @@
 
 <div class="top-bar">
     <h1>🦴 骨傷科 OSCE 特殊檢查抽籤系統</h1>
-    <p>2026 骨傷科檢查法操作提綱 · 加權隨機 · 計時模擬 · ⭐掌握級重點標示</p>
+    <p> 掌握用星星標示</p>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -265,14 +265,14 @@
     <div id="landing" class="landing">
         <div class="landing-icon">🦴</div>
         <h2>骨傷科 OSCE 檢查法操作考核</h2>
-        <p class="sub">根據 <strong>2026 骨傷科檢查法操作提綱</strong> 編製，加權隨機抽籤模擬。<br>⭐<strong>掌握級</strong>檢查被抽中機率最高且重點標示，<strong>一般級</strong>機率較低。</p>
+        <p class="sub">根據 <strong>2026 骨傷科檢查法操作提綱</strong> 編製，加weighting隨機抽 <br>⭐<strong>掌握</strong>檢查最容易被抽中且重點標示，<strong>一般</strong>機率較低但都要溫</p>
 
         <div class="stats">
-            <div class="stat">🦴 脊柱骨盆 <span id="ss">0</span> 項</div>
-            <div class="stat">💪 四肢 <span id="sl">0</span> 項</div>
-            <div class="stat">⭐ 掌握 <span id="sm">0</span> 項</div>
-            <div class="stat">📋 總計 <span id="st">0</span> 項</div>
-            <div class="stat">🎲 已抽 <span id="sd">0</span> 次</div>
+            <div class="stat">脊柱骨盆 <span id="ss">0</span> 項</div>
+            <div class="stat">四肢 <span id="sl">0</span> 項</div>
+            <div class="stat">掌握 <span id="sm">0</span> 項</div>
+            <div class="stat">總計 <span id="st">0</span> 項</div>
+            <div class="stat">已抽 <span id="sd">0</span> 次</div>
         </div>
 
         <div class="info-grid">
@@ -325,21 +325,20 @@
                     </select>
                 </div>
             </div>
-            <h4 style="margin-top:10px;">⚖️ 權重設定（數值越高被抽中機率越大）</h4>
+            <h4 style="margin-top:10px;">⚖️ Weighting設定（越高越容易被抽中）</h4>
             <div class="weight-row">
-                <span class="weight-label">⭐ 掌握級</span>
+                <span class="weight-label">⭐掌握</span>
                 <input type="range" class="weight-slider" id="wStar" min="1" max="10" value="5" oninput="document.getElementById('wvStar').textContent=this.value">
                 <span class="weight-val" id="wvStar">5</span>
             </div>
             <div class="weight-row">
-                <span class="weight-label">📘 一般級</span>
+                <span class="weight-label">一般</span>
                 <input type="range" class="weight-slider" id="wNorm" min="1" max="10" value="2" oninput="document.getElementById('wvNorm').textContent=this.value">
                 <span class="weight-val" id="wvNorm">2</span>
             </div>
         </div>
 
-        <button class="draw-btn" onclick="startExam()">🎲 加權隨機抽籤，開始考試！</button>
-        <p class="note">每次抽籤結果不同，多練幾次覆蓋所有檢查項目！</p>
+        <button class="draw-btn" onclick="startExam()">🎲 隨機抽籤開始考試！</button>
     </div>
 
     <!-- ===== Exam ===== -->
@@ -360,12 +359,12 @@
     <!-- History -->
     <div class="history">
         <h3>📜 抽籤歷史記錄</h3>
-        <div id="histList"><div class="history-empty">暫無記錄，開始第一次抽籤吧！</div></div>
+        <div id="histList"><div class="history-empty">暫無記錄，開始抽籤啦</div></div>
     </div>
 
     <!-- Browse all -->
     <div class="browse-section">
-        <div class="browse-toggle" id="browseToggle" onclick="toggleBrowse()">📚 展開全部題庫（點擊瀏覽所有 32 項檢查）</div>
+        <div class="browse-toggle" id="browseToggle" onclick="toggleBrowse()">📚 展開全部檢查（點擊瀏覽所有 32 項檢查）</div>
         <div class="browse-content" id="browseContent"></div>
     </div>
 
@@ -373,7 +372,7 @@
 
 <script>
 // ============================================================
-//  完整題庫 — 根據 2026 骨傷科檢查法操作提綱
+//  完整檢查List — 根據 2026 骨傷科檢查法操作提綱
 //  star: true = ⭐掌握級
 // ============================================================
 const SPINE = [
