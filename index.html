@@ -238,13 +238,144 @@
             .timer-text { font-size: 1.15rem; }
             .info-grid { grid-template-columns: 1fr; }
         }
+        /* ══ Tab navigation ══ */
+.top-tabs { display:flex; gap:6px; justify-content:center; margin-top:10px; }
+.top-tab {
+    background:rgba(255,255,255,0.15); color:rgba(255,255,255,0.7); border:2px solid rgba(255,255,255,0.2);
+    padding:7px 22px; border-radius:25px; font-size:0.88rem; font-weight:bold; cursor:pointer; transition:0.3s;
+}
+.top-tab.active { background:white; color:#dc2626; border-color:white; }
+.top-tab:hover:not(.active) { background:rgba(255,255,255,0.25); color:white; }
+.main-tab { display:none; }
+.main-tab.active { display:block; }
+
+/* ══ Imaging Quiz ══ */
+.iq-menu { text-align:center; padding:20px 0; }
+.iq-menu h2 { color:var(--primary); font-size:1.5rem; margin-bottom:4px; }
+.iq-menu .sub { color:#666; font-size:0.9rem; margin-bottom:16px; }
+.iq-cats-box {
+    background:white; border:2px solid #e5e7eb; border-radius:var(--radius);
+    padding:18px; margin:14px 0; text-align:left;
+}
+.iq-cats-box h4 { margin:0 0 10px; }
+.iq-cats-hd { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.iq-cats-wrap { display:flex; flex-wrap:wrap; gap:6px; }
+.iq-cat-btn {
+    padding:5px 14px; border-radius:20px; font-size:0.78rem; font-weight:bold;
+    border:2px solid #d1d5db; background:#f9fafb; color:#6b7280; cursor:pointer; transition:0.2s;
+}
+.iq-cat-btn.sel { border-color:#3b82f6; background:#dbeafe; color:#1d4ed8; box-shadow:0 0 0 2px rgba(59,130,246,0.3); }
+.iq-start-btn {
+    background:linear-gradient(135deg,#3b82f6,#2563eb); color:white; border:none;
+    padding:14px 40px; border-radius:28px; font-size:1.15rem; font-weight:bold;
+    cursor:pointer; transition:0.3s; box-shadow:0 4px 18px rgba(37,99,235,0.3); margin-top:12px;
+}
+.iq-start-btn:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(37,99,235,0.4); }
+.iq-start-btn:disabled { background:#d1d5db; box-shadow:none; cursor:default; transform:none; }
+
+/* Quiz card */
+.iq-quiz { display:none; }
+.iq-quiz.active { display:block; animation:fadeIn 0.3s; }
+.iq-topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:6px; }
+.iq-progress { width:100%; background:#e5e7eb; height:5px; border-radius:3px; margin-bottom:14px; }
+.iq-progress-fill { height:100%; background:linear-gradient(90deg,#3b82f6,#2563eb); border-radius:3px; transition:width 0.3s; }
+.iq-card {
+    background:white; border:2px solid #e5e7eb; border-radius:var(--radius);
+    overflow:hidden; margin-bottom:16px; transition:0.3s;
+}
+.iq-card:hover { border-color:#93c5fd; box-shadow:0 4px 16px rgba(59,130,246,0.1); }
+.iq-img-area {
+    background:linear-gradient(135deg,#f0f9ff,#eff6ff); padding:16px;
+    border-bottom:2px solid #bfdbfe; text-align:center;
+}
+.iq-img-area img { max-width:100%; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.1); }
+.iq-placeholder {
+    background:#0d1117; color:#4a5568; padding:40px 20px; border-radius:12px;
+    font-size:0.9rem; text-align:center; min-height:160px; display:flex;
+    flex-direction:column; justify-content:center; align-items:center; gap:8px;
+}
+.iq-placeholder .title { color:#9ca3af; font-size:0.95rem; font-weight:bold; }
+.iq-placeholder .sub { color:#4a5568; font-size:0.8rem; }
+.iq-cat-badge {
+    display:inline-block; padding:3px 14px; border-radius:20px; font-size:0.78rem;
+    font-weight:bold; margin-bottom:8px;
+}
+.iq-label-badge {
+    display:inline-block; background:#fef2f2; border:2px solid #fca5a5; color:#dc2626;
+    padding:4px 16px; border-radius:12px; font-size:0.88rem; font-weight:bold; margin-top:6px;
+}
+.iq-hint { color:#9ca3af; font-size:0.78rem; margin-top:6px; }
+
+.iq-answer-area { padding:16px; }
+.iq-input {
+    width:100%; padding:12px 16px; border:2px solid #e5e7eb; border-radius:12px;
+    font-size:0.95rem; outline:none; transition:0.2s; margin-bottom:10px; background:#fafafa;
+}
+.iq-input:focus { border-color:#3b82f6; background:white; }
+.iq-input:disabled { opacity:0.5; }
+.iq-show-btn {
+    width:100%; padding:11px; background:linear-gradient(135deg,#3b82f6,#2563eb);
+    color:white; border:none; border-radius:12px; font-size:0.95rem; font-weight:bold;
+    cursor:pointer; transition:0.3s;
+}
+.iq-show-btn:hover { box-shadow:0 4px 15px rgba(37,99,235,0.3); }
+.iq-correct-box {
+    background:#f0fdf4; border:2px solid #86efac; border-radius:12px; padding:12px;
+    margin-bottom:10px; animation:fadeIn 0.3s;
+}
+.iq-correct-box .label { color:#16a34a; font-size:0.78rem; font-weight:bold; }
+.iq-correct-box .answer { color:#166534; font-size:1.1rem; font-weight:bold; margin-top:2px; }
+.iq-mark-btns { display:flex; gap:10px; margin-top:10px; }
+.iq-mark-btn {
+    flex:1; padding:11px; border:none; border-radius:12px; font-size:0.92rem;
+    font-weight:bold; cursor:pointer; transition:0.3s; color:white;
+}
+.iq-mark-btn.correct { background:linear-gradient(135deg,#22c55e,#16a34a); }
+.iq-mark-btn.wrong { background:linear-gradient(135deg,#ef4444,#dc2626); }
+.iq-mark-btn:hover { transform:translateY(-2px); }
+.iq-feedback {
+    text-align:center; padding:8px; border-radius:10px; margin:8px 0; font-weight:bold;
+    font-size:0.92rem; animation:fadeIn 0.2s;
+}
+.iq-feedback.good { background:#f0fdf4; color:#16a34a; }
+.iq-feedback.bad { background:#fef2f2; color:#dc2626; }
+.iq-next-btn {
+    width:100%; padding:11px; background:linear-gradient(135deg,#3b82f6,#2563eb);
+    color:white; border:none; border-radius:12px; font-size:0.95rem; font-weight:bold;
+    cursor:pointer; margin-top:8px; transition:0.3s;
+}
+.iq-next-btn:hover { box-shadow:0 4px 15px rgba(37,99,235,0.3); }
+
+/* Results */
+.iq-results { display:none; }
+.iq-results.active { display:block; animation:fadeIn 0.3s; }
+.iq-results h2 { text-align:center; margin-bottom:12px; }
+.iq-result-stats { display:flex; justify-content:center; gap:24px; margin-bottom:14px; }
+.iq-result-stats .num { font-size:2rem; font-weight:bold; }
+.iq-result-stats .lbl { font-size:0.78rem; color:#6b7280; }
+.iq-result-bar { width:100%; background:#e5e7eb; height:10px; border-radius:5px; margin-bottom:10px; }
+.iq-result-bar-fill { height:100%; background:#22c55e; border-radius:5px; transition:width 0.5s; }
+.iq-wrong-list {
+    background:white; border:2px solid #fecaca; border-radius:var(--radius); padding:16px;
+    margin:14px 0; max-height:350px; overflow-y:auto;
+}
+.iq-wrong-item { padding:8px; border-bottom:1px solid #f3f4f6; font-size:0.88rem; }
+.iq-wrong-item:last-child { border-bottom:none; }
+.iq-wrong-item .q { color:#9ca3af; font-size:0.78rem; }
+.iq-wrong-item .a { color:#166534; font-weight:bold; margin-top:2px; }
+.iq-wrong-item .u { color:#dc2626; font-size:0.78rem; }
     </style>
 </head>
 <body>
 
+
 <div class="top-bar">
-    <h1>🦴 骨傷科 OSCE 特殊檢查抽籤系統</h1>
-    <p> 掌握用星星標示</p>
+    <h1>🦴 骨傷科 OSCE 模擬系統</h1>
+    <p>特殊檢查抽籤 + 影像診斷測驗</p>
+    <div class="top-tabs">
+        <button class="top-tab active" id="tabBtn1" onclick="switchMainTab('exam')">📋 特殊檢查</button>
+        <button class="top-tab" id="tabBtn2" onclick="switchMainTab('imaging')">🩻 影像診斷</button>
+    </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -257,9 +388,35 @@
 </div>
 
 <div class="container">
-<button class="btn btn-red btn-sm" style="margin-top:20px;" onclick="showLowFamiliarReview()">
-  ❗ 檢視唔熟題目回顧 (<span id="lowFamCount">0</span>)
-</button>
+
+<!-- ══════ TAB 1: 特殊檢查 ══════ -->
+<div id="mainTab-exam" class="main-tab active">
+
+    <!-- top-bar 之後 -->
+
+<div class="container">
+
+    <!-- ══════ TAB 1: 特殊檢查 ══════ -->
+    <div id="mainTab-exam" class="main-tab active">
+
+        <!-- 你原有嘅所有嘢：landing、exam、history、browse-section 全部放喺呢度入面 -->
+        <button class="btn btn-red btn-sm" ...>...</button>
+        <div id="landing" class="landing">...</div>
+        <div id="exam" class="exam-area">...</div>
+        <div class="history">...</div>
+        <div class="browse-section">...</div>
+
+    </div><!-- end mainTab-exam -->
+
+    <!-- ══════ TAB 2: 影像診斷測驗 ══════ -->
+    <div id="mainTab-imaging" class="main-tab">
+        <div id="iqMenu" class="iq-menu">...</div>
+        <div id="iqQuiz" class="iq-quiz">...</div>
+        <div id="iqResults" class="iq-results">...</div>
+    </div><!-- end mainTab-imaging -->
+
+</div><!-- end container -->
+    
 
     <!-- ===== Landing ===== -->
     <div id="landing" class="landing">
@@ -973,6 +1130,381 @@ toggleLowFamiliar('spine-0');
 toggleLowFamiliar('limb-5');
 updateLowFamCount();
 showAllStationList();
+
+
+    // ════════════════════════════════════════════════════════════
+//  TAB 切換
+// ════════════════════════════════════════════════════════════
+function switchMainTab(tab) {
+    document.querySelectorAll('.main-tab').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.top-tab').forEach(el => el.classList.remove('active'));
+    document.getElementById('mainTab-' + tab).classList.add('active');
+    document.getElementById('tabBtn' + (tab === 'exam' ? '1' : '2')).classList.add('active');
+    window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+// ════════════════════════════════════════════════════════════
+//  影像診斷測驗 — 數據
+// ════════════════════════════════════════════════════════════
+const IQ_DATA = [
+  {id:1,image:"頸椎正位 X-ray",label:"#4",answer:"Spinous process of C7（C7棘突）",cat:"頸椎 X-ray"},
+  {id:2,image:"頸椎正位 X-ray",label:"#5",answer:"Vertebral Body of C5（C5椎體）",cat:"頸椎 X-ray"},
+  {id:3,image:"頸椎正位 X-ray",label:"#6",answer:"Uncinate process（鉤突）",cat:"頸椎 X-ray"},
+  {id:4,image:"頸椎側位 X-ray",label:"#1",answer:"Vertebral body TH1（T1椎體）",cat:"頸椎 X-ray"},
+  {id:5,image:"頸椎側位 X-ray",label:"#2",answer:"Spinous process of C7（C7棘突）",cat:"頸椎 X-ray"},
+  {id:6,image:"頸椎側位 X-ray",label:"#4",answer:"Inferior articular process（下關節突）",cat:"頸椎 X-ray"},
+  {id:7,image:"頸椎側位 X-ray",label:"#5",answer:"Superior articular process（上關節突）",cat:"頸椎 X-ray"},
+  {id:8,image:"頸椎側位 X-ray",label:"#6",answer:"Spinous process of C2（C2棘突）",cat:"頸椎 X-ray"},
+  {id:9,image:"頸椎側位 X-ray",label:"#7",answer:"Odontoid process（齒突）",cat:"頸椎 X-ray"},
+  {id:10,image:"頸椎側位 X-ray",label:"#8",answer:"Anterior arch of C1 / Atlas（寰椎前弓）",cat:"頸椎 X-ray"},
+  {id:11,image:"頸椎斜位 X-ray",label:"#3",answer:"Neural Foramina（椎間孔）",cat:"頸椎 X-ray"},
+  {id:12,image:"頸椎斜位 X-ray",label:"#4",answer:"Pedicle（椎弓根）",cat:"頸椎 X-ray"},
+  {id:13,image:"正常胸椎正位 X-ray",label:"左上方標記",answer:"Intervertebral Disc（椎間盤）",cat:"胸椎 X-ray"},
+  {id:14,image:"正常胸椎正位 X-ray",label:"左中偏上標記",answer:"Pedicles（椎弓根）",cat:"胸椎 X-ray"},
+  {id:15,image:"正常胸椎正位 X-ray",label:"左中標記",answer:"Spinous Processes（棘突）",cat:"胸椎 X-ray"},
+  {id:16,image:"正常胸椎正位 X-ray",label:"右中標記",answer:"Rib（肋骨）",cat:"胸椎 X-ray"},
+  {id:17,image:"正常胸椎正位 X-ray",label:"左下標記",answer:"Vertebral Body（椎體）",cat:"胸椎 X-ray"},
+  {id:18,image:"正常腰椎正位 X-ray",label:"L1棘突標記",answer:"Spine of L1（L1棘突）",cat:"腰椎 X-ray"},
+  {id:19,image:"正常腰椎正位 X-ray",label:"L1椎體標記",answer:"Vertebral Body of L1（L1椎體）",cat:"腰椎 X-ray"},
+  {id:20,image:"正常腰椎正位 X-ray",label:"椎間盤位置標記",answer:"Position of the Intervertebral Disc（椎間盤位置）",cat:"腰椎 X-ray"},
+  {id:21,image:"正常腰椎側位 X-ray",label:"L2-L3椎間盤標記",answer:"L2-L3 Intervertebral Disc（L2-L3椎間盤）",cat:"腰椎 X-ray"},
+  {id:22,image:"正常腰椎側位 X-ray",label:"L4椎體標記",answer:"Body of L4（L4椎體）",cat:"腰椎 X-ray"},
+  {id:23,image:"正常腰椎側位 X-ray",label:"椎間孔標記",answer:"Intervertebral Foramen（椎間孔）",cat:"腰椎 X-ray"},
+  {id:24,image:"正常腰椎側位 X-ray",label:"底部標記",answer:"Sacrum（骶骨）",cat:"腰椎 X-ray"},
+  {id:25,image:"正常腰椎斜位 X-ray",label:"#10",answer:"Scotty dog sign（蘇格蘭狗徵）",cat:"腰椎 X-ray"},
+  {id:26,image:"骨盆正位 X-ray",label:"左上標記",answer:"Iliac Crest（髂嵴）",cat:"骨盆 X-ray"},
+  {id:27,image:"骨盆正位 X-ray",label:"髖臼標記",answer:"Acetabulum（髖臼）",cat:"骨盆 X-ray"},
+  {id:28,image:"骨盆正位 X-ray",label:"股骨頭標記",answer:"Head of the Femur（股骨頭）",cat:"骨盆 X-ray"},
+  {id:29,image:"骨盆正位 X-ray",label:"右上標記",answer:"Sacrum（骶骨）",cat:"骨盆 X-ray"},
+  {id:30,image:"骨盆正位 X-ray",label:"骶髂關節標記",answer:"Sacroiliac Joint（骶髂關節）",cat:"骨盆 X-ray"},
+  {id:31,image:"肩關節正位 X-ray",label:"肩鎖關節標記",answer:"Acromioclavicular Joint（肩鎖關節）",cat:"肩部 X-ray"},
+  {id:32,image:"肩關節正位 X-ray",label:"肩峰標記",answer:"Acromion Process（肩峰）",cat:"肩部 X-ray"},
+  {id:33,image:"肩關節正位 X-ray",label:"肱骨頭標記",answer:"Head of the Humerus（肱骨頭）",cat:"肩部 X-ray"},
+  {id:34,image:"肩關節正位 X-ray",label:"大結節標記",answer:"Greater Tubercle（大結節）",cat:"肩部 X-ray"},
+  {id:35,image:"肩關節正位 X-ray",label:"關節盂標記",answer:"Glenoid Fossa（關節盂）",cat:"肩部 X-ray"},
+  {id:36,image:"肩關節正位 X-ray",label:"喙突標記",answer:"Coracoid Process（喙突）",cat:"肩部 X-ray"},
+  {id:37,image:"肩關節正位 X-ray",label:"鎖骨標記",answer:"Clavicle（鎖骨）",cat:"肩部 X-ray"},
+  {id:38,image:"正常肘關節正位 X-ray",label:"外上髁標記",answer:"Lateral Epicondyle（外上髁）",cat:"肘部 X-ray"},
+  {id:39,image:"正常肘關節正位 X-ray",label:"內上髁標記",answer:"Medial Epicondyle（內上髁）",cat:"肘部 X-ray"},
+  {id:40,image:"正常肘關節正位 X-ray",label:"鷹嘴突標記",answer:"Olecranon Process（鷹嘴突）",cat:"肘部 X-ray"},
+  {id:41,image:"正常肘關節正位 X-ray",label:"橈骨頸標記",answer:"Neck of the Radius（橈骨頸）",cat:"肘部 X-ray"},
+  {id:42,image:"正常肘關節側位 X-ray",label:"髁上嵴標記",answer:"Supracondylar Ridges（髁上嵴）",cat:"肘部 X-ray"},
+  {id:43,image:"正常肘關節側位 X-ray",label:"鷹嘴突標記",answer:"Olecranon Process（鷹嘴突）",cat:"肘部 X-ray"},
+  {id:44,image:"正常肘關節側位 X-ray",label:"肱骨小頭標記",answer:"Capitulum（肱骨小頭）",cat:"肘部 X-ray"},
+  {id:45,image:"正常肘關節側位 X-ray",label:"橈骨頭標記",answer:"Head of the Radius（橈骨頭）",cat:"肘部 X-ray"},
+  {id:46,image:"正常肘關節側位 X-ray",label:"冠突標記",answer:"Coronoid Process of the Ulna（尺骨冠突）",cat:"肘部 X-ray"},
+  {id:47,image:"正常腕關節正位 X-ray",label:"第一掌骨基底標記",answer:"Base of the 1st Metacarpal（第一掌骨基底）",cat:"腕部 X-ray"},
+  {id:48,image:"正常腕關節正位 X-ray",label:"舟骨標記",answer:"Scaphoid（舟骨）",cat:"腕部 X-ray"},
+  {id:49,image:"正常腕關節正位 X-ray",label:"橈骨莖突標記",answer:"Styloid Process of the Radius（橈骨莖突）",cat:"腕部 X-ray"},
+  {id:50,image:"正常腕關節正位 X-ray",label:"月骨標記",answer:"Lunate（月骨）",cat:"腕部 X-ray"},
+  {id:51,image:"正常手和腕關節側位 X-ray",label:"第一掌骨標記",answer:"1st Metacarpal（第一掌骨）",cat:"腕部 X-ray"},
+  {id:52,image:"正常手和腕關節側位 X-ray",label:"腕骨標記",answer:"Carpus（腕骨）",cat:"腕部 X-ray"},
+  {id:53,image:"正常手和腕關節側位 X-ray",label:"底部標記",answer:"Radius and Ulna（橈骨和尺骨）",cat:"腕部 X-ray"},
+  {id:54,image:"正常髖關節正位 X-ray",label:"髖臼緣標記",answer:"Acetabular Rim（髖臼緣）",cat:"髖部 X-ray"},
+  {id:55,image:"正常髖關節正位 X-ray",label:"股骨頭標記",answer:"Head of the Femur（股骨頭）",cat:"髖部 X-ray"},
+  {id:56,image:"正常髖關節正位 X-ray",label:"股骨頸標記",answer:"Neck of the Femur（股骨頸）",cat:"髖部 X-ray"},
+  {id:57,image:"正常髖關節正位 X-ray",label:"大轉子標記",answer:"Greater Trochanter（大轉子）",cat:"髖部 X-ray"},
+  {id:58,image:"正常膝關節正位 X-ray",label:"髕骨標記",answer:"Patella（髕骨）",cat:"膝部 X-ray"},
+  {id:59,image:"正常膝關節正位 X-ray",label:"股骨外髁標記",answer:"Lateral Femoral Condyle（股骨外側髁）",cat:"膝部 X-ray"},
+  {id:60,image:"正常膝關節正位 X-ray",label:"股骨內髁標記",answer:"Medial Femoral Condyle（股骨內側髁）",cat:"膝部 X-ray"},
+  {id:61,image:"正常膝關節正位 X-ray",label:"脛骨外髁標記",answer:"Lateral Tibial Condyle（脛骨外側髁）",cat:"膝部 X-ray"},
+  {id:62,image:"正常膝關節正位 X-ray",label:"脛骨內髁標記",answer:"Medial Tibial Condyle（脛骨內側髁）",cat:"膝部 X-ray"},
+  {id:63,image:"正常膝關節正位 X-ray",label:"髁間隆起標記",answer:"Medial & Lateral Intercondylar Tubercles（內外側髁間結節）",cat:"膝部 X-ray"},
+  {id:64,image:"正常膝關節側位 X-ray",label:"髕面標記",answer:"Patellar Surface of the Femur（股骨髕面）",cat:"膝部 X-ray"},
+  {id:65,image:"正常膝關節側位 X-ray",label:"髕骨標記",answer:"Patella（髕骨）",cat:"膝部 X-ray"},
+  {id:66,image:"正常膝關節側位 X-ray",label:"腓骨幹標記",answer:"Shaft of the Fibula（腓骨幹）",cat:"膝部 X-ray"},
+  {id:67,image:"正常膝關節側位 X-ray",label:"脛骨髁標記",answer:"Tibial Condyles（脛骨髁）",cat:"膝部 X-ray"},
+  {id:68,image:"正常膝關節軸位 X-ray",label:"髕骨標記",answer:"Patella（髕骨）",cat:"膝部 X-ray"},
+  {id:69,image:"正常膝關節軸位 X-ray",label:"股骨髕面標記",answer:"Patellar Surface of the Femur（股骨髕面）",cat:"膝部 X-ray"},
+  {id:70,image:"正常膝關節軸位 X-ray",label:"髕骨關節面標記",answer:"Articular Surface of the Patella（髕骨關節面）",cat:"膝部 X-ray"},
+  {id:71,image:"正常膝關節軸位 X-ray",label:"股骨外髁標記",answer:"Lateral Femoral Condyle（股骨外側髁）",cat:"膝部 X-ray"},
+  {id:72,image:"正常足側位 X-ray",label:"脛骨標記",answer:"Tibia（脛骨）",cat:"足踝 X-ray"},
+  {id:73,image:"正常足側位 X-ray",label:"距骨體標記",answer:"Body of the Talus（距骨體）",cat:"足踝 X-ray"},
+  {id:74,image:"正常足側位 X-ray",label:"舟骨標記",answer:"Navicular（舟骨）",cat:"足踝 X-ray"},
+  {id:75,image:"正常足側位 X-ray",label:"楔骨標記",answer:"Cuneiforms（楔骨）",cat:"足踝 X-ray"},
+  {id:76,image:"正常足側位 X-ray",label:"跟骨標記",answer:"Calcaneus（跟骨）",cat:"足踝 X-ray"},
+  {id:77,image:"頸椎CT前面觀",label:"#1",answer:"Transverse process（橫突）",cat:"頸椎 CT"},
+  {id:78,image:"頸椎CT前面觀",label:"C1標記",answer:"Vertebral body C1（C1椎體/寰椎）",cat:"頸椎 CT"},
+  {id:79,image:"頸椎CT後面觀",label:"#2",answer:"Transverse process of C1 / Atlas（寰椎橫突）",cat:"頸椎 CT"},
+  {id:80,image:"頸椎CT後面觀",label:"#4",answer:"Spinous process of C5（C5棘突）",cat:"頸椎 CT"},
+  {id:81,image:"頸椎CT側面觀",label:"#1",answer:"Vertebral body C6（C6椎體）",cat:"頸椎 CT"},
+  {id:82,image:"頸椎CT側面觀",label:"#2",answer:"C5-C6 facet joint（C5-C6小關節）",cat:"頸椎 CT"},
+  {id:83,image:"頸椎CT側面觀",label:"#4",answer:"Posterior tubercle of C1（C1後結節）",cat:"頸椎 CT"},
+  {id:84,image:"頸椎CT側面觀",label:"#5",answer:"Spinous process of C2（C2棘突）",cat:"頸椎 CT"},
+  {id:85,image:"頸椎CT側面觀",label:"#6",answer:"Spinous process of C7（C7棘突）",cat:"頸椎 CT"},
+  {id:86,image:"頸椎MRI矢狀位T2",label:"#1",answer:"Anterior arch of C1 / Atlas（寰椎前弓）",cat:"頸椎 MRI"},
+  {id:87,image:"頸椎MRI矢狀位T2",label:"#2",answer:"Spinal cord（脊髓）",cat:"頸椎 MRI"},
+  {id:88,image:"頸椎MRI矢狀位T2",label:"#3",answer:"Posterior arch of C1 / Atlas（寰椎後弓）",cat:"頸椎 MRI"},
+  {id:89,image:"頸椎MRI矢狀位T2",label:"#4",answer:"Odontoid process / C2（齒突）",cat:"頸椎 MRI"},
+  {id:90,image:"頸椎MRI矢狀位T2",label:"#5",answer:"Spinous process of C2 / Axis（C2棘突）",cat:"頸椎 MRI"},
+  {id:91,image:"頸椎MRI矢狀位T2",label:"#7",answer:"Intervertebral disc space（椎間盤間隙）",cat:"頸椎 MRI"},
+  {id:92,image:"頸椎MRI水平位T2",label:"#1",answer:"Neural foramen（椎間孔）",cat:"頸椎 MRI"},
+  {id:93,image:"頸椎MRI水平位T2",label:"#2",answer:"Posterior nerve root（後神經根）",cat:"頸椎 MRI"},
+  {id:94,image:"頸椎MRI水平位T2",label:"#3",answer:"Spinous process C3（C3棘突）",cat:"頸椎 MRI"},
+  {id:95,image:"頸椎MRI水平位T2",label:"#4",answer:"Lamina（椎板）",cat:"頸椎 MRI"},
+  {id:96,image:"頸椎MRI水平位T2",label:"#5",answer:"Spinal cord（脊髓）",cat:"頸椎 MRI"},
+  {id:97,image:"頸椎MRI水平位T2",label:"#6",answer:"Vertebral body C3（C3椎體）",cat:"頸椎 MRI"},
+  {id:98,image:"腰椎MRI矢狀位T2",label:"椎體標記",answer:"Vertebral body / bone（椎體）",cat:"腰椎 MRI"},
+  {id:99,image:"腰椎MRI矢狀位T2",label:"椎間盤標記",answer:"Intervertebral disc（椎間盤）",cat:"腰椎 MRI"},
+  {id:100,image:"腰椎MRI矢狀位T2",label:"中央管道標記",answer:"Central canal（中央椎管）",cat:"腰椎 MRI"},
+  {id:101,image:"肩關節MRI冠狀位T1",label:"#4",answer:"Acromion（肩峰）",cat:"肩部 MRI"},
+  {id:102,image:"肩關節MRI冠狀位T1",label:"#5",answer:"Supraspinatus tendon（岡上肌腱）",cat:"肩部 MRI"},
+  {id:103,image:"肩關節MRI冠狀位T1",label:"#6",answer:"Greater tuberosity（大結節）",cat:"肩部 MRI"},
+  {id:104,image:"肩關節MRI冠狀位T1",label:"#7",answer:"Humeral head（肱骨頭）",cat:"肩部 MRI"},
+  {id:105,image:"肩關節MRI冠狀位T1",label:"#8",answer:"Supraspinatus muscle（岡上肌）",cat:"肩部 MRI"},
+  {id:106,image:"髖關節MRI冠狀位T1",label:"#1",answer:"Greater trochanter（大轉子）",cat:"髖部 MRI"},
+  {id:107,image:"髖關節MRI冠狀位T1",label:"#3",answer:"Right femoral head（右側股骨頭）",cat:"髖部 MRI"},
+  {id:108,image:"髖關節MRI冠狀位T1",label:"#7",answer:"Acetabulum（髖臼）",cat:"髖部 MRI"},
+  {id:109,image:"髖關節MRI水平位T1",label:"#8",answer:"Left femoral head（左側股骨頭）",cat:"髖部 MRI"},
+  {id:110,image:"髖關節MRI水平位T1",label:"#13",answer:"Greater trochanter（大轉子）",cat:"髖部 MRI"},
+  {id:111,image:"膝關節MRI矢狀位",label:"上方骨骼標記",answer:"股骨 Femur",cat:"膝部 MRI"},
+  {id:112,image:"膝關節MRI矢狀位",label:"前方骨骼標記",answer:"髕骨 Patella",cat:"膝部 MRI"},
+  {id:113,image:"膝關節MRI矢狀位",label:"後上方韌帶標記",answer:"後交叉韌帶 PCL",cat:"膝部 MRI"},
+  {id:114,image:"膝關節MRI矢狀位",label:"中央韌帶標記",answer:"前交叉韌帶 ACL",cat:"膝部 MRI"},
+  {id:115,image:"膝關節MRI矢狀位",label:"下方骨骼標記",answer:"脛骨 Tibia",cat:"膝部 MRI"},
+  {id:116,image:"膝關節MRI矢狀位T2",label:"#3",answer:"Medial meniscus, anterior horn（內側半月板前角）",cat:"膝部 MRI"},
+  {id:117,image:"膝關節MRI矢狀位T2",label:"#6",answer:"Medial meniscus, posterior horn（內側半月板後角）",cat:"膝部 MRI"},
+  {id:118,image:"膝關節MRI矢狀位T2 ACL/PCL",label:"#5",answer:"Anterior cruciate ligament（前交叉韌帶 ACL）",cat:"膝部 MRI"},
+  {id:119,image:"膝關節MRI矢狀位T2 ACL/PCL",label:"#8",answer:"Posterior cruciate ligament（後交叉韌帶 PCL）",cat:"膝部 MRI"},
+  {id:120,image:"膝關節MRI冠狀位T1",label:"#5/#7",answer:"Medial meniscus（內側半月板）",cat:"膝部 MRI"},
+  {id:121,image:"膝關節MRI冠狀位T1",label:"#6/#8",answer:"Lateral meniscus（外側半月板）",cat:"膝部 MRI"},
+  {id:122,image:"踝關節MRI矢狀位T1",label:"#1",answer:"Tibia（脛骨）",cat:"足踝 MRI"},
+  {id:123,image:"踝關節MRI矢狀位T1",label:"#3",answer:"Talus（距骨）",cat:"足踝 MRI"},
+  {id:124,image:"踝關節MRI矢狀位T1",label:"#5",answer:"Navicular（舟骨）",cat:"足踝 MRI"},
+  {id:125,image:"踝關節MRI矢狀位T1",label:"#12",answer:"Calcaneus（跟骨）",cat:"足踝 MRI"},
+  {id:126,image:"踝關節MRI矢狀位T1",label:"#13",answer:"Achilles tendon（跟腱）",cat:"足踝 MRI"},
+  {id:127,image:"踝關節MRI冠狀位T2",label:"#1",answer:"Tibia（脛骨）",cat:"足踝 MRI"},
+  {id:128,image:"踝關節MRI冠狀位T2",label:"#2",answer:"Talus（距骨）",cat:"足踝 MRI"},
+  {id:129,image:"踝關節MRI冠狀位T2",label:"#3",answer:"Fibula（腓骨）",cat:"足踝 MRI"},
+  {id:130,image:"踝關節MRI冠狀位T2",label:"#4",answer:"Calcaneus（跟骨）",cat:"足踝 MRI"},
+];
+
+// 圖片對照表：question=遮蓋版, answer=標註版
+// 將圖片放入同目錄嘅 images/ 資料夾
+const IQ_IMG = {
+  "骨盆正位 X-ray":{q:"images/pelvis_ap_q.jpg",a:"images/pelvis_ap_a.jpg"},
+  "肩關節正位 X-ray":{q:"images/shoulder_ap_q.jpg",a:"images/shoulder_ap_a.jpg"},
+  "正常肘關節正位 X-ray":{q:"images/elbow_ap_q.jpg",a:"images/elbow_ap_a.jpg"},
+  "正常肘關節側位 X-ray":{q:"images/elbow_lat_q.jpg",a:"images/elbow_lat_a.jpg"},
+  "正常腕關節正位 X-ray":{q:"images/wrist_ap_a.jpg",a:"images/wrist_ap_a.jpg"},
+  "正常手和腕關節側位 X-ray":{q:"images/hand_wrist_lat_q.jpg",a:"images/hand_wrist_lat_a.jpg"},
+  "正常髖關節正位 X-ray":{q:"images/hip_ap_a.jpg",a:"images/hip_ap_a.jpg"},
+  "正常膝關節正位 X-ray":{q:"images/knee_ap_q.jpg",a:"images/knee_ap_a.jpg"},
+  "正常膝關節側位 X-ray":{q:"images/knee_lat_q.jpg",a:"images/knee_lat_a.jpg"},
+  "正常膝關節軸位 X-ray":{q:"images/knee_axial_q.jpg",a:"images/knee_axial_a.jpg"},
+  "正常足側位 X-ray":{q:"images/foot_lat_q.jpg",a:"images/foot_lat_a.jpg"},
+};
+
+const IQ_CAT_COLORS = {
+  "頸椎 X-ray":"background:#dbeafe;color:#1d4ed8;border-color:#93c5fd;",
+  "胸椎 X-ray":"background:#f3e8ff;color:#7c3aed;border-color:#c4b5fd;",
+  "腰椎 X-ray":"background:#e0e7ff;color:#4338ca;border-color:#a5b4fc;",
+  "骨盆 X-ray":"background:#fce7f3;color:#be185d;border-color:#f9a8d4;",
+  "肩部 X-ray":"background:#dcfce7;color:#166534;border-color:#86efac;",
+  "肘部 X-ray":"background:#ccfbf1;color:#115e59;border-color:#5eead4;",
+  "腕部 X-ray":"background:#cffafe;color:#155e75;border-color:#67e8f9;",
+  "髖部 X-ray":"background:#ffedd5;color:#9a3412;border-color:#fdba74;",
+  "膝部 X-ray":"background:#fee2e2;color:#991b1b;border-color:#fca5a5;",
+  "足踝 X-ray":"background:#fef9c3;color:#854d0e;border-color:#fde047;",
+  "頸椎 CT":"background:#d1fae5;color:#065f46;border-color:#6ee7b7;",
+  "頸椎 MRI":"background:#e0f2fe;color:#075985;border-color:#7dd3fc;",
+  "腰椎 MRI":"background:#ede9fe;color:#5b21b6;border-color:#a78bfa;",
+  "肩部 MRI":"background:#ecfccb;color:#3f6212;border-color:#bef264;",
+  "髖部 MRI":"background:#fef3c7;color:#92400e;border-color:#fcd34d;",
+  "膝部 MRI":"background:#ffe4e6;color:#9f1239;border-color:#fda4af;",
+  "足踝 MRI":"background:#fae8ff;color:#86198f;border-color:#e879f9;",
+};
+
+const iqCategories = [...new Set(IQ_DATA.map(q => q.cat))];
+const iqSelectedCats = new Set(iqCategories);
+
+// 狀態
+let iqQuestions=[], iqIdx=0, iqShowAns=false, iqSubmitted=false, iqResults=[], iqInput='';
+
+// ════════════════════════════════════════════════════════════
+//  影像診斷測驗 — 初始化
+// ════════════════════════════════════════════════════════════
+function iqInit() {
+    document.getElementById('iqTotal').textContent = IQ_DATA.length;
+    iqRenderCats();
+}
+
+function iqRenderCats() {
+    const wrap = document.getElementById('iqCatsWrap');
+    wrap.innerHTML = iqCategories.map(cat => {
+        const cnt = IQ_DATA.filter(q => q.cat === cat).length;
+        const sel = iqSelectedCats.has(cat);
+        const style = sel ? IQ_CAT_COLORS[cat] || '' : '';
+        return `<button class="iq-cat-btn${sel?' sel':''}" style="${sel?style:''}" onclick="iqToggleCat('${cat}')">${cat} (${cnt})</button>`;
+    }).join('');
+    const selCount = IQ_DATA.filter(q => iqSelectedCats.has(q.cat)).length;
+    document.getElementById('iqSelCount').textContent = selCount;
+    document.getElementById('iqStartBtn').disabled = selCount === 0;
+}
+
+function iqToggleCat(cat) {
+    if(iqSelectedCats.has(cat)) iqSelectedCats.delete(cat); else iqSelectedCats.add(cat);
+    iqRenderCats();
+}
+function iqSelectAll() { iqCategories.forEach(c => iqSelectedCats.add(c)); iqRenderCats(); }
+function iqDeselectAll() { iqSelectedCats.clear(); iqRenderCats(); }
+
+// ════════════════════════════════════════════════════════════
+//  開始測驗
+// ════════════════════════════════════════════════════════════
+function iqStartQuiz() {
+    const filtered = IQ_DATA.filter(q => iqSelectedCats.has(q.cat));
+    if(!filtered.length) return;
+    iqQuestions = shuffle(filtered);
+    iqIdx = 0; iqShowAns = false; iqSubmitted = false; iqResults = []; iqInput = '';
+    document.getElementById('iqMenu').style.display = 'none';
+    document.getElementById('iqResults').classList.remove('active');
+    document.getElementById('iqQuiz').classList.add('active');
+    iqRenderQuestion();
+}
+
+function iqBackMenu() {
+    document.getElementById('iqQuiz').classList.remove('active');
+    document.getElementById('iqResults').classList.remove('active');
+    document.getElementById('iqMenu').style.display = '';
+}
+
+// ════════════════════════════════════════════════════════════
+//  渲染題目
+// ════════════════════════════════════════════════════════════
+function iqRenderQuestion() {
+    const q = iqQuestions[iqIdx];
+    const correctCnt = iqResults.filter(r => r.mark === true).length;
+    const wrongCnt = iqResults.filter(r => r.mark === false).length;
+    const imgEntry = IQ_IMG[q.image];
+    const catStyle = IQ_CAT_COLORS[q.cat] || 'background:#f3f4f6;color:#4b5563;';
+
+    // Top bar
+    document.getElementById('iqCounter').textContent = (iqIdx+1) + ' / ' + iqQuestions.length;
+    document.getElementById('iqScore').innerHTML = `<span style="color:#16a34a;">✓ ${correctCnt}</span> <span style="color:#dc2626;">✗ ${wrongCnt}</span>`;
+    document.getElementById('iqProgressFill').style.width = ((iqIdx+1)/iqQuestions.length*100)+'%';
+
+    // Image area
+    let imgHtml = `<div style="margin-bottom:8px;"><span class="iq-cat-badge" style="${catStyle}">${q.cat}</span></div>`;
+
+    if(imgEntry) {
+        const src = iqShowAns && imgEntry.a ? imgEntry.a : imgEntry.q;
+        imgHtml += `<img src="${src}" alt="${q.image}" onerror="this.style.display='none';this.nextSibling.style.display='flex';">
+            <div class="iq-placeholder" style="display:none;"><div class="title">📷 ${q.image}</div><div class="sub">圖片載入失敗</div></div>`;
+    } else {
+        imgHtml += `<div class="iq-placeholder"><div class="title">📷 ${q.image}</div><div class="sub">（示意圖 — 請配合教材圖片溫習）</div></div>`;
+    }
+
+    imgHtml += `<div style="margin-top:8px;font-size:0.9rem;color:#374151;font-weight:600;">${q.image}</div>`;
+    imgHtml += `<div class="iq-label-badge">📍 ${q.label}</div>`;
+    imgHtml += `<div class="iq-hint">${imgEntry ? '請辨認黃色方塊遮蓋嘅解剖結構' : '請辨認標記所指的解剖結構'}</div>`;
+
+    document.getElementById('iqImgArea').innerHTML = imgHtml;
+
+    // Answer area
+    let ansHtml = `<input class="iq-input" id="iqInputField" type="text" placeholder="輸入你的答案（中文或英文皆可）..."
+        ${iqSubmitted ? 'disabled' : ''} value="${iqInput}" oninput="iqInput=this.value"
+        onkeydown="if(event.key==='Enter'&&!iqSubmitted)iqSubmit()">`;
+
+    if(!iqSubmitted) {
+        ansHtml += `<button class="iq-show-btn" onclick="iqSubmit()">👁️ 顯示答案</button>`;
+    }
+
+    if(iqShowAns) {
+        ansHtml += `<div class="iq-correct-box"><div class="label">✅ 正確答案</div><div class="answer">${q.answer}</div></div>`;
+
+        const lastR = iqResults[iqResults.length - 1];
+        if(lastR && lastR.mark === null) {
+            ansHtml += `<p style="text-align:center;color:#6b7280;font-size:0.88rem;margin:8px 0;">你答啱咗嗎？</p>
+                <div class="iq-mark-btns">
+                    <button class="iq-mark-btn correct" onclick="iqMark(true)">✅ 答啱咗</button>
+                    <button class="iq-mark-btn wrong" onclick="iqMark(false)">❌ 答錯咗</button>
+                </div>`;
+        } else if(lastR && lastR.mark !== null) {
+            ansHtml += `<div class="iq-feedback ${lastR.mark?'good':'bad'}">${lastR.mark?'👍 做得好！':'💪 下次加油！'}</div>`;
+            const isLast = iqIdx >= iqQuestions.length - 1;
+            ansHtml += `<button class="iq-next-btn" onclick="iqNext()">${isLast ? '查看結果 📊' : '下一題 →'}</button>`;
+        }
+    }
+
+    document.getElementById('iqAnswerArea').innerHTML = ansHtml;
+    if(!iqSubmitted) { const inp = document.getElementById('iqInputField'); if(inp) inp.focus(); }
+}
+
+function iqSubmit() {
+    if(iqSubmitted) return;
+    iqSubmitted = true; iqShowAns = true;
+    const q = iqQuestions[iqIdx];
+    iqResults.push({id:q.id, userAns:iqInput.trim(), answer:q.answer, image:q.image, label:q.label, mark:null});
+    iqRenderQuestion();
+    // 如果有真實圖片，切換到答案版
+    const imgEntry = IQ_IMG[q.image];
+    if(imgEntry && imgEntry.a) {
+        const img = document.querySelector('#iqImgArea img');
+        if(img) img.src = imgEntry.a;
+    }
+}
+
+function iqMark(correct) {
+    iqResults[iqResults.length - 1].mark = correct;
+    iqRenderQuestion();
+}
+
+function iqNext() {
+    if(iqIdx < iqQuestions.length - 1) {
+        iqIdx++; iqShowAns = false; iqSubmitted = false; iqInput = '';
+        iqRenderQuestion();
+        document.getElementById('iqQuiz').scrollIntoView({behavior:'smooth',block:'start'});
+    } else {
+        iqShowResults();
+    }
+}
+
+// ════════════════════════════════════════════════════════════
+//  結果頁
+// ════════════════════════════════════════════════════════════
+function iqShowResults() {
+    document.getElementById('iqQuiz').classList.remove('active');
+    document.getElementById('iqResults').classList.add('active');
+
+    const correct = iqResults.filter(r => r.mark === true).length;
+    const wrong = iqResults.filter(r => r.mark === false).length;
+    const total = iqResults.filter(r => r.mark !== null).length;
+    const pct = total > 0 ? Math.round(correct / total * 100) : 0;
+    const wrongOnes = iqResults.filter(r => r.mark === false);
+
+    let html = `
+        <div class="iq-result-stats">
+            <div style="text-align:center;"><div class="num" style="color:#16a34a;">${correct}</div><div class="lbl">答對</div></div>
+            <div style="text-align:center;"><div class="num" style="color:#dc2626;">${wrong}</div><div class="lbl">答錯</div></div>
+            <div style="text-align:center;"><div class="num" style="color:#3b82f6;">${iqQuestions.length}</div><div class="lbl">總題數</div></div>
+        </div>
+        <div class="iq-result-bar"><div class="iq-result-bar-fill" style="width:${pct}%"></div></div>
+        <p style="text-align:center;color:#374151;margin-bottom:16px;">正確率：<strong>${pct}%</strong></p>`;
+
+    if(wrongOnes.length > 0) {
+        html += `<div class="iq-wrong-list"><h4 style="color:#dc2626;margin:0 0 8px;">❌ 需要重溫的題目 (${wrongOnes.length})</h4>`;
+        wrongOnes.forEach(r => {
+            html += `<div class="iq-wrong-item">
+                <div class="q">${r.image} — ${r.label}</div>
+                <div class="a">✅ ${r.answer}</div>
+                ${r.userAns ? `<div class="u">你的答案：${r.userAns}</div>` : ''}
+            </div>`;
+        });
+        html += `</div>`;
+    }
+
+    html += `<div class="btns">
+        <button class="btn btn-gray" onclick="iqBackMenu()">🏠 返回主頁</button>
+        <button class="btn btn-blue" onclick="iqStartQuiz()">🔄 重新測驗</button>
+    </div>`;
+
+    document.getElementById('iqResultContent').innerHTML = html;
+    document.getElementById('iqResults').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// Init imaging quiz
+iqInit();
 </script>
 </body>
 </html>
