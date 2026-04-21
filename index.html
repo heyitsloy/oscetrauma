@@ -1574,20 +1574,17 @@ var IQ_DATA = [
 ];
 
 var IQ_IMG = {
-"頸椎正位 X-ray":  { q:"cervical_ap_question.jpg",      a:"cervical_ap_answer.jpg" },
-  "頸椎側位 X-ray":  { q:"cervical_lat_question.jpg",     a:"cervical_lat_answer.jpg" },
-  "頸椎斜位 X-ray":  { q:"cervical_oblique_question.jpg", a:"cervical_oblique_answer.jpg" },
-  "骨盆正位 X-ray":{q:"images/pelvis_ap_q.jpg",a:"images/pelvis_ap_a.jpg"},
-  "肩關節正位 X-ray":{q:"images/shoulder_ap_q.jpg",a:"images/shoulder_ap_a.jpg"},
-  "正常肘關節正位 X-ray":{q:"images/elbow_ap_q.jpg",a:"images/elbow_ap_a.jpg"},
-  "正常肘關節側位 X-ray":{q:"images/elbow_lat_q.jpg",a:"images/elbow_lat_a.jpg"},
-  "正常腕關節正位 X-ray":{q:"images/wrist_ap_a.jpg",a:"images/wrist_ap_a.jpg"},
-  "正常手和腕關節側位 X-ray":{q:"images/hand_wrist_lat_q.jpg",a:"images/hand_wrist_lat_a.jpg"},
-  "正常髖關節正位 X-ray":{q:"images/hip_ap_a.jpg",a:"images/hip_ap_a.jpg"},
-  "正常膝關節正位 X-ray":{q:"images/knee_ap_q.jpg",a:"images/knee_ap_a.jpg"},
-  "正常膝關節側位 X-ray":{q:"images/knee_lat_q.jpg",a:"images/knee_lat_a.jpg"},
-  "正常膝關節軸位 X-ray":{q:"images/knee_axial_q.jpg",a:"images/knee_axial_a.jpg"},
-  "正常足側位 X-ray":{q:"images/foot_lat_q.jpg",a:"images/foot_lat_a.jpg"}
+  "頸椎正位 X-ray":       {q:"cervical_ap_question.jpg",      a:"cervical_ap_answer.jpg"},
+  "頸椎側位 X-ray":       {q:"cervical_lat_question.jpg",     a:"cervical_lat_answer.jpg"},
+  "頸椎斜位 X-ray":       {q:"cervical_oblique_question.jpg", a:"cervical_oblique_answer.jpg"},
+  "肘關節側位 X-ray":     {q:"elbow_lat_question.jpg",        a:"elbow_lat_answer.jpg"},
+  "足部側位 X-ray":       {q:"foot_lat_question.jpg",         a:"foot_lat_answer.jpg"},
+  "前臂側位 X-ray":       {q:"handelbow_lat_question.jpg",    a:"handelbow_lat_answer.jpg"},
+  "膝關節正位 X-ray":     {q:"knee_ap_question.jpg",          a:"knee_ap_answer.jpg"},
+  "膝關節軸位 X-ray":     {q:"knee_axial_question.jpg",       a:"knee_axial_answer.jpg"},
+  "膝關節側位 X-ray":     {q:"knee_lat_question.jpg",         a:"knee_lat_answer.jpg"},
+  "正常腰椎正位 X-ray":   {q:"lumbar_ap_question.jpg",        a:"lumbar_ap_answer.jpg"},
+  "腰椎Scotty Dog X-ray": {q:"lumbar_lat_question2dog.jpg",   a:"lumbar_lat_answer2dog.jpg"},
 };
 
 var IQ_CAT_COLORS = {
@@ -1776,9 +1773,47 @@ function iqShowResults() {
     document.getElementById('iqResultContent').innerHTML = html;
     document.getElementById('iqResults').scrollIntoView({behavior:'smooth',block:'start'});
 }
+var L=[],ci=0;
+(function build(){
+  for(var n in IQ_DATA){
+    if(!IQ_IMG[n])continue;
+    IQ_DATA[n].forEach(function(q){L.push({n:n,q:q});});
+  }
+  for(var i=L.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=L[i];L[i]=L[j];L[j]=t;}
+  document.getElementById("tot").textContent=L.length;
+})();
 
+function go(){
+  document.getElementById("s0").classList.add("hide");
+  document.getElementById("s1").classList.remove("hide");
+  nxt();
+}
+function nxt(){
+  if(ci>=L.length){
+    document.getElementById("s1").classList.add("hide");
+    document.getElementById("s2").classList.remove("hide");
+    return;
+  }
+  var it=L[ci];
+  document.getElementById("pg").textContent=(ci+1)+"/"+L.length+"　"+it.n;
+  document.getElementById("qt").textContent="第 "+it.q.id+" 號係咩？";
+  document.getElementById("qi").src=IQ_IMG[it.n].q;
+  document.getElementById("at").classList.add("hide");
+  document.getElementById("ba").classList.remove("hide");
+  document.getElementById("bx").classList.add("hide");
+  ci++;
+}
+function ans(){
+  var it=L[ci-1];
+  document.getElementById("at").textContent="✅ "+it.q.id+" 號 = "+it.q.text;
+  document.getElementById("at").classList.remove("hide");
+  document.getElementById("qi").src=IQ_IMG[it.n].a;
+  document.getElementById("ba").classList.add("hide");
+  document.getElementById("bx").classList.remove("hide");
+}
 // Init imaging quiz
 iqInit();
+    
 
 </script>
 </body>
