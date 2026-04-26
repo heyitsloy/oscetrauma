@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Rounded+Mplus+1c&display=swap" rel="stylesheet">
     <title>🦴 骨傷科 OSCE 特殊檢查抽籤系統</title>
     <style>
         :root {
@@ -583,16 +584,11 @@ const LIMB = [
      indication:"提示蹠痛病、扁平足、莫頓病（Morton's disease）"}
 ];
 
-// ============================================================
-//  全局狀態
-// ============================================================
 let timerInterval = null, timeLeft = 0, timerTotal = 300;
 let phase = 0, allStations = [], drawCount = 0, hist = [];
 let browseOpen = false;
 const lowFamiliarSet = new Set(); // 用於存放標記唔熟題目，key格式"phase-題號"
-// ============================================================
-//  工具函數
-// ============================================================
+
 function toast(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg; t.classList.add('show');
@@ -624,9 +620,6 @@ function weightedPick(arr, n) {
     return res;
 }
 
-// ============================================================
-//  考試邏輯
-// ============================================================
 function startExam() {
     const nS = parseInt(document.getElementById('pSpine').value);
     const nL = parseInt(document.getElementById('pLimb').value);
@@ -677,8 +670,6 @@ function renderPhase() {
     box.innerHTML = stations.map((s, idx) => {
         const starBadge = s.data.star ? `<span class="badge badge-star">⭐ 掌握</span>` : '';
         const starClass = s.data.star ? ' is-star' : '';
-
-        // 判斷是否標記唔熟
         const key = phase + '-' + s.num;
         const lowFam = lowFamiliarSet.has(key);
         const lowLabel = lowFam ? '<span style="color:#ef4444; font-weight:bold;">唔熟</span>' : '';
@@ -761,8 +752,7 @@ function backHome() {
     document.getElementById('landing').style.display='';
     window.scrollTo({top:0,behavior:'smooth'});
 }
-
-// Timer
+    
 function startTimer(sec) {
     clearInterval(timerInterval); timeLeft=sec; timerTotal=sec; updateTimer();
     timerInterval = setInterval(()=>{
@@ -783,14 +773,12 @@ function updateTimer() {
     f.style.background=timeLeft<=60?'#ef4444':'linear-gradient(90deg,#22c55e,#16a34a)';
 }
 
-// History
 function renderHist() {
     const c=document.getElementById('histList');
     if(!hist.length){c.innerHTML='<div class="history-empty">暫無記錄</div>';return;}
     c.innerHTML=hist.map((h,i)=>`<div class="history-item"><span>🎲 第 ${drawCount-i} 次：${h.names}</span><span class="time">${h.time}</span></div>`).join('');
 }
 
-// Browse
 function toggleBrowse() {
     browseOpen=!browseOpen;
     const c=document.getElementById('browseContent'), t=document.getElementById('browseToggle');
@@ -837,18 +825,13 @@ function showDetail(type,idx) {
 function closeModal(){document.getElementById('modal').classList.remove('show');}
 document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
 
-// 新增：切換標記唔熟狀態
-
 function toggleLowFamiliar(key) {
   if(lowFamiliarSet.has(key)) lowFamiliarSet.delete(key);
   else lowFamiliarSet.add(key);
-
-  // 如果在考試中，重新渲染題目區
   if(document.getElementById('exam').classList.contains('active')) {
     renderPhase();
   }
   
-  // 如果 modal 是「唔熟回顧頁」，重新更新清單
   if(document.getElementById('modal').classList.contains('show') 
      && document.getElementById('modal-inner').innerHTML.includes('唔熟題目回顧')) {
     showLowFamiliarReview();
@@ -960,7 +943,6 @@ function updateLowFamCount() {
   if(c) c.textContent = lowFamiliarSet.size;
 }
     
-// Init stats
 const starCount = SPINE.filter(x=>x.star).length + LIMB.filter(x=>x.star).length;
 document.getElementById('ss').textContent = SPINE.length;
 document.getElementById('sl').textContent = LIMB.length;
@@ -969,6 +951,6 @@ document.getElementById('st').textContent = SPINE.length + LIMB.length;
 updateLowFamCount();
 
 </script>
-<p style="text-align:center;color:#336;font-size:0.9rem;padding:18px 0 10px;"> by CM28 Loy :)</p>
+<p style="text-align:center;color:#6688bb;font-size:0.7rem;padding:18px 0 10px;font-family:'Rounded Mplus 1c',sans-serif;"> by CM28 Loy</p>
 </body>
 </html>
